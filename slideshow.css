@@ -1,0 +1,55 @@
+div#re_slideshow { position: relative; width: 550px; height: 300px; padding: 0 0 40px; margin: 0 auto; }
+div#re_slideshow .list { position: absolute; width: 550px; height: 300px; z-index: 1; overflow: hidden; }
+ 
+div#re_slideshow button {
+	width: 25px; height: 50px; position: absolute; top: 118px;
+	outline: 0; cursor: hand; border: 0 none; color: #666; font-size: 20px; line-height: 25px; font-weight: bold;
+		border-bottom: 0 none;
+}
+div#re_slideshow #jqc-prev {
+	left: -25px;
+}
+div#re_slideshow #jqc-next {
+	right: -25px;
+}
+ 
+div#re_slideshow .item { width: 550px; margin: 0; }
+div#re_slideshow .item .image { display: block; float: right; padding: 0; }
+div#re_slideshow .item .meta {
+  float: left;
+  padding: 10px 20px;
+  position: absolute;
+  top: 200px;
+  width: 510px;
+  color: white;
+  z-index: 40;
+}
+div#re_slideshow .item .meta h3, div#re_slideshow .item .meta h3 a{
+  color: white;
+}
+
+
+div#re_slideshow .item .meta-back {
+  background: none repeat scroll 0 0 #333333;
+  float: left;
+  height: 50px;
+  opacity: 0.7;
+  padding: 20px;
+  position: absolute;
+  top: 200px;
+  width: 550px;
+  z-index: 39;
+}
+
+
+div#re_slideshow h3 {
+	font-weight: bold;
+	font-size: 1.4em;
+	display: block; padding: 0; 
+	margin: 0 0 10px 0;
+}
+div#re_slideshow h3 a:hover, div#slideshow h3 a:active {
+	border: 0 none;
+	text-decoration: underline;
+}
+div#re_slideshow p { display: block; padding: 0; margin: 0 0 20px 0; }
