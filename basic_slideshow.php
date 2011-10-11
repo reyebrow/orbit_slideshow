@@ -1,52 +1,55 @@
 <?php
 /*
-Plugin Name: Raised Eyebrow Slideshow Plugin
-Description: slides!!!!
+Plugin Name: Basic Slideshow Plugin
+Description: Lightweight slideshow framework developed by Raised Eyebrow web studios for our client work. We were frustrated with the slideshow plugins available to us so we wrote our own. This plugin uses custom content types and gives a lot of flexibility when it comes to theming.
 Version: 0.1
 License: GPL
 Author: Matt Reimer
 Author URI: http://www.raisedeyebrow.com/
 */
 
-$re_slide_options = get_option('re_slideshow_options');
+$basic_slide_options = get_option('basic_slideshow_options');
 
 
 //Make sure we've got the right kind of images set up.
 add_theme_support('post-thumbnails');
-add_image_size('re_slideshow', $re_slide_options[slide_width],$re_slide_options[slide_height],true);
-add_shortcode('re_slideshow', 're_slideshow');
+add_image_size('basic_slideshow', $basic_slide_options[slide_width],$basic_slide_options[slide_height],true);
+add_shortcode('basic_slideshow', 'basic_slideshow');
 
 
 
 //Add all the JS we need to make this go.
-function re_add_scripts() {
+function basic_add_scripts() {
 
   wp_enqueue_script('jquery');
   
-   wp_register_script('re_jquery_cycle',
+   wp_register_script('basic_jquery_cycle',
          plugins_url('js/jquery.cycle.all.min.js', __FILE__),
          array('jquery'),
          '1.0' );
-   wp_register_script('re_slideshow_script',
-         plugins_url('js/re_slideshow.js', __FILE__),
-         array('re_jquery_cycle'),
+   wp_register_script('basic_slideshow_script',
+         plugins_url('js/basic_slideshow.js', __FILE__),
+         array('basic_jquery_cycle'),
          '1.0' );
   
-    wp_enqueue_script('re_jquery_cycle');
-    wp_enqueue_script('re_slideshow_script');
-    wp_localize_script( 're_slideshow_script', 'slideshow_settings', get_option('re_slideshow_options') );
+    wp_enqueue_script('basic_jquery_cycle');
+    wp_enqueue_script('basic_slideshow_script');
+    wp_localize_script( 'basic_slideshow_script', 'slideshow_settings', get_option('basic_slideshow_options') );
   
-  wp_enqueue_style('re_slideshow_style', plugins_url('slideshow.css', __FILE__));
+  wp_enqueue_style('basic_slideshow_style', plugins_url('slideshow.css', __FILE__));
 
 }
-add_action('wp_enqueue_scripts', 're_add_scripts');
-add_action( 'init', 're_create_slideshow_posttype' );
+add_action('wp_enqueue_scripts', 'basic_add_scripts');
+add_action( 'init', 'basic_create_slideshow_posttype' );
+
+
+
 
 /********************************************
 // Create the Custom 'Slideshow' Post Type
 ********************************************/
 
-function re_create_slideshow_posttype() {
+function basic_create_slideshow_posttype() {
   
   $labels = array(
       'name' => _x('Slideshow', 'post type general name'),
@@ -79,14 +82,14 @@ function re_create_slideshow_posttype() {
       'taxonomies' => array()
   );
     
-  register_post_type( 're_slideshow', $args);
+  register_post_type( 'basic_slideshow', $args);
 
 }
 
 
-function re_slideshow_custom_excerpt(){
-  $re_slide_options = get_option('re_slideshow_options');
-  return $re_slide_options[teaser_length];
+function basic_slideshow_custom_excerpt(){
+  $basic_slide_options = get_option('basic_slideshow_options');
+  return $basic_slide_options[teaser_length];
   
 }
 
@@ -94,28 +97,36 @@ function re_slideshow_custom_excerpt(){
 // Do the actual slideshow
 ********************************************/
 
-function re_slideshow() {
-	global $wp_Query;
+function basic_slideshow() {
+
+	global $wp_query;
   global $post;
   global $wp_embed;
+  
   $query_vars= $wp_query->query_vars;
-  $query_vars['post_type'] = 're_slideshow';
-  $re_slide_options = get_option('re_slideshow_options');
-  add_filter('excerpt_length', 're_slideshow_custom_excerpt', 10);
+  
+  $query_vars['meta_key']  = 'slide_weight';
+  $query_vars['orderby'] = 'meta_value';
+  $query_vars['order'] = 'ASC';  
+  
+  $query_vars['post_type'] = 'basic_slideshow';
+  $basic_slide_options = get_option('basic_slideshow_options');
+  
+  add_filter('excerpt_length', 'basic_slideshow_custom_excerpt', 10);
   add_filter('excerpt_more', 'new_excerpt_more');
   query_posts($query_vars);
 
   
 ?>
 
-<div id="re_slideshow">
+<div id="basic_slideshow">
   <div class="list">
 	<?php while (have_posts()) : the_post(); ?>
 	<?php
-		      $slide_meta = get_post_meta($post->ID, 'slide_meta', true);	
-				$video_url = !empty($slide_meta['video_url']) ? $slide_meta['video_url'] : "";
-        $slide_url = !empty($slide_meta['slide_url']) ? $slide_meta['slide_url'] : get_permalink();
-         $isVideo =  (!empty($video_url) && $video_url != "")? true : false;
+    $slide_meta = get_post_meta($post->ID, 'slide_meta', true);	
+    $video_url = !empty($slide_meta['video_url']) ? $slide_meta['video_url'] : "";
+    $slide_url = !empty($slide_meta['slide_url']) ? $slide_meta['slide_url'] : get_permalink();
+    $isVideo =  (!empty($video_url) && $video_url != "")? true : false;
 	?>
 	
 	<div class="item <?php print $isVideo ?"video-slide": "";?>">
@@ -123,19 +134,19 @@ function re_slideshow() {
 
 	     
 			if ( $isVideo ){
-        $post_embed = $wp_embed->run_shortcode('[embed width="' . $re_slide_options['slide_width'] . '" height="' . $re_slide_options['slide_height'] . '"]' . $video_url . '[/embed]');
+        $post_embed = $wp_embed->run_shortcode('[embed width="' . $basic_slide_options['slide_width'] . '" height="' . $basic_slide_options['slide_height'] . '"]' . $video_url . '[/embed]');
         print $post_embed;
 			}
 			else{ ?>
         <a class="image" href="<?php print $slide_url; ?>" >
-        <?php the_post_thumbnail('re_slideshow'); ?>
+        <?php the_post_thumbnail('basic_slideshow'); ?>
         </a>
         	
-
+          <?php // HERE we print the transparent overlay and text ?>
           <div class="meta">
             <h3><a href="<?php print $slide_url; ?>" title="Permanent Link to <?php the_title_attribute(); ?>"><?php the_title(); ?></a></h3>
             
-            <?php the_excerpt(); ?>
+            <?php the_excerpt(); //Here's the body of the content type gets printed ?>
           </div>
           <div class="meta-back">&nbsp;</div>
           
@@ -151,12 +162,17 @@ function re_slideshow() {
 </div>
 
 <?php
+  //Reset all the changes we've made to wp_query so that any loops below this will work properly
 	wp_reset_query();
   remove_filter('excerpt_more', 'new_excerpt_more');
-	remove_filter('excerpt_length','re_slideshow_custom_excerpt');
+	remove_filter('excerpt_length','basic_slideshow_custom_excerpt');
 }
 
 
+
+/********************************************
+// Change the excerpt size
+********************************************/
 function new_excerpt_more($more) {
        global $post;
       $slide_meta = get_post_meta($post->ID, 'slide_meta', true);	
@@ -165,11 +181,9 @@ function new_excerpt_more($more) {
 }
 
 
-
+//add ENABLEjsAPI to youtube videos
 //With mad props to mehigh http://mehigh.biz/wordpress/adding-wmode-transparent-to-wordpress-3-media-embeds.html
 function add_video_wmode_transparent($html, $url, $attr) {
-
-//add ENABLEjsAPI to youtube videos
 
 	$pattern = '/(youtube.com\/)(v\/\w+\?version=\d+)/i';
 	$add = '&enablejsapi=1';
@@ -187,6 +201,6 @@ function add_video_wmode_transparent($html, $url, $attr) {
 add_filter('embed_oembed_html', 'add_video_wmode_transparent', 10, 3);
 
 
-include_once('re_slideshow_admin.php');
-include_once('re_slideshow_widget.php');
+include_once('basic_slideshow_admin.php');
+include_once('basic_slideshow_widget.php');
 
