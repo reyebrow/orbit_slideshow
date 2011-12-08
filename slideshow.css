@@ -3,75 +3,64 @@
 ********************************************/
 
 
-div#basic_slideshow { position: relative; padding: 0 0 40px; margin: 0 auto; }
-div#basic_slideshow .list { position: absolute; z-index: 1; overflow: hidden; }
+#basic_slideshow {}
+#basic_slideshow .list {}
  
-div#basic_slideshow .item { margin: 0; }
-div#basic_slideshow .item .image { display: block; float: right; padding: 0; }
-div#basic_slideshow .item .meta {
-  float: left;
+#basic_slideshow .item {
+background: white;
+}
+#basic_slideshow .item .image {}
+#basic_slideshow .item .meta {
+  position: absolute;
   padding: 10px 20px;
-  position: absolute;
-  top: 60%;
-  color: white;
-  z-index: 40;
-}
-div#basic_slideshow .item .meta h3, div#basic_slideshow .item .meta h3 a{
-  color: white;
-}
-
-
-div#basic_slideshow .item .meta-back {
-  background: none repeat scroll 0 0 #333;
-  float: left;
+  top: 50%;
+  left: 0%;
+  width: 80%;
   height: 30%;
-  opacity: 0.7;
-  padding: 0;
+  color: white;
+}
+#basic_slideshow .item .meta h3, #basic_slideshow .item .meta h3 a{}
+
+
+#basic_slideshow .item .meta-back {
   position: absolute;
-  top: 60%;
-  z-index: 39;
-  width: 100%;
+  top: 50%;
+  left: 0%;
+  width: 80%;
+  height: 40%;
+  background: black;
+  opacity: 0.7;
 }
 
 
-div#basic_slideshow img, .widget img {
-  max-width: 100%;
-}
+#basic_slideshow img, .widget img {}
 
-div#basic_slideshow .video-slide{ background: black; }
-div#basic_slideshow .video-slide object embed {
-  margin: 0 auto;
-  display: block;
-}
+#basic_slideshow .video-slide {}
+#basic_slideshow .video-slide object embed {}
 
-div#basic_slideshow h3 {
-  font-weight: bold;
-  font-size: 1.2em;
-  display: block;
-  padding: 0;
-  margin: 0 0 10px 0;
-  line-height: 1;
-}
-div#basic_slideshow h3 a:hover, div#slideshow h3 a:active {
-	border: 0 none;
-	text-decoration: underline;
-}
-div#basic_slideshow p { display: block; padding: 0; margin: 0 0 20px 0; }
+#basic_slideshow h3 {}
+#basic_slideshow h3 a:hover, div#slideshow h3 a:active {	}
+#basic_slideshow p {}
 
 /********************************************
 // The Buttons
 ********************************************/
 
-div#basic_slideshow button {
-	width: 25px; height: 50px; position: absolute; top: 118px;
-	outline: 0; cursor: hand; border: 0 none; color: #666; font-size: 20px; line-height: 25px; font-weight: bold;
-		border-bottom: 0 none;
+#basic_slideshow .slider-nav span{
+  width: 30px;
+  height: 50px;
+  text-indent: -9999px;
+  position: absolute;
+  z-index: 1000;
+  top: 50%;
+  margin-top: -50px;
+  cursor: pointer;
 }
-div#basic_slideshow #jqc-prev {
-	left: -25px;
+#basic_slideshow .slider-nav .left{
+  background: url(images/left-arrow.png);
 }
-div#basic_slideshow #jqc-next {
-	right: -25px;
+#basic_slideshow .slider-nav .right{
+  background: url(images/right-arrow.png);
 }
 
 
@@ -79,28 +68,8 @@ div#basic_slideshow #jqc-next {
 // The Pager
 ********************************************/
 
-div#basic_slideshow #slideshow_pager{
-  position: absolute;
-  bottom: 0px;
-}
-div#basic_slideshow #slideshow_pager a{
-  color: white;
-  background: #666;
-  display: block;
-  float: left;
-  width: 1.5em;
-  height: 1.5em;
-  line-height: 1.5;
-  text-align: center;
-  text-decoration: none;
-  margin: 0 1px;
-}
-div#basic_slideshow #slideshow_pager a.activeSlide{
-  color: white;
-  background: black;
-}
-div#basic_slideshow #slideshow_pager a:hover{
-  color: white;
-  background: #999;
-}
+#basic_slideshow #slideshow_pager{}
+#basic_slideshow #slideshow_pager a{}
+#basic_slideshow #slideshow_pager a.activeSlide{}
+#basic_slideshow #slideshow_pager a:hover{}
 

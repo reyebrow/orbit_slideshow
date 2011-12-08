@@ -20,28 +20,32 @@ add_shortcode('basic_slideshow', 'basic_slideshow');
 
 //Add all the JS we need to make this go.
 function basic_add_scripts() {
-
+  
+  //You may have foundation loaded in your theme. If so there's no reason to do it twice.
+  print "<pre>" . print_r($wp_scripts,1) . "</pre>";
+  
   wp_enqueue_script('jquery');
   
-   wp_register_script('basic_jquery_cycle',
-         plugins_url('js/jquery.cycle.all.min.js', __FILE__),
+   wp_register_script('jquery.orbit-1.3.0',
+         plugins_url('foundation/jquery.orbit-1.3.0.js', __FILE__),
          array('jquery'),
          '1.0' );
+   wp_enqueue_style('orbit.style', plugins_url('foundation/orbit.css', __FILE__));
+         
    wp_register_script('basic_slideshow_script',
          plugins_url('js/basic_slideshow.js', __FILE__),
-         array('basic_jquery_cycle'),
+         array('jquery.orbit-1.3.0'),
          '1.0' );
   
-    wp_enqueue_script('basic_jquery_cycle');
+    wp_enqueue_script('jquery.orbit-1.3.0');
     wp_enqueue_script('basic_slideshow_script');
+    
     wp_localize_script( 'basic_slideshow_script', 'slideshow_settings', get_option('basic_slideshow_options') );
   
-  wp_enqueue_style('basic_slideshow_style', plugins_url('slideshow.css', __FILE__));
+    wp_enqueue_style('basic_slideshow_style', plugins_url('slideshow.css', __FILE__));
 
 }
 add_action('wp_enqueue_scripts', 'basic_add_scripts');
-add_action( 'init', 'basic_create_slideshow_posttype' );
-
 
 
 
@@ -85,6 +89,7 @@ function basic_create_slideshow_posttype() {
   register_post_type( 'basic_slideshow', $args);
 
 }
+add_action( 'init', 'basic_create_slideshow_posttype' );
 
 
 function basic_slideshow_custom_excerpt(){
@@ -103,65 +108,72 @@ function basic_slideshow() {
   global $post;
   global $wp_embed;
   
-  $query_vars= $wp_query->query_vars;
-  
+  //$query_vars = $wp_query->query_vars;
+  $query_vars = array();
+
+  $query_vars['post_type'] = 'basic_slideshow';
+
   $query_vars['meta_key']  = 'slide_weight';
   $query_vars['orderby'] = 'meta_value';
   $query_vars['order'] = 'ASC';  
-  
-  $query_vars['post_type'] = 'basic_slideshow';
+
   $basic_slide_options = get_option('basic_slideshow_options');
   
   add_filter('excerpt_length', 'basic_slideshow_custom_excerpt', 10);
   add_filter('excerpt_more', 'new_excerpt_more');
-  query_posts($query_vars);
 
+  //query_posts($query_vars);
+  $slide_query = new WP_Query( $query_vars );
+//print_r($slide_query);
+
+if ($slide_query->have_posts()){
+  ?>
   
-?>
+  <div id="basic_slideshow">
+    <div class="list">
+  	<?php while ($slide_query->have_posts()) : $slide_query->the_post(); ?>
+  	<?php
+      $slide_meta = get_post_meta($post->ID, 'slide_meta', true);	
+      $video_url = !empty($slide_meta['video_url']) ? $slide_meta['video_url'] : "";
+      $slide_url = !empty($slide_meta['slide_url']) ? $slide_meta['slide_url'] : get_permalink();
+      $isVideo =  (!empty($video_url) && $video_url != "")? true : false;
+  	?>
+  	
+  	<div class="item <?php print $isVideo ?"video-slide": "";?>">
+  	<?php
+  
+  	     
+  			if ( $isVideo ){
+          $post_embed = $wp_embed->run_shortcode('[embed width="' . $basic_slide_options['slide_width'] . '" height="' . $basic_slide_options['slide_height'] . '"]' . $video_url . '[/embed]');
+          print $post_embed;
+  			}
+  			else{ ?>
+          <a class="image" href="<?php print $slide_url; ?>" >
+          <?php the_post_thumbnail('basic_slideshow'); ?>
+          </a>
+          	
+            <?php // HERE we print the transparent overlay and text ?>
+            <div class="meta-back">&nbsp;</div>
+            <div class="meta">
+              <h3><a href="<?php print $slide_url; ?>" title="Permanent Link to <?php the_title_attribute(); ?>"><?php the_title(); ?></a></h3>
+              
+              <?php the_excerpt(); //Here's the body of the content type gets printed ?>
+            </div>
 
-<div id="basic_slideshow">
-  <div class="list">
-	<?php while (have_posts()) : the_post(); ?>
-	<?php
-    $slide_meta = get_post_meta($post->ID, 'slide_meta', true);	
-    $video_url = !empty($slide_meta['video_url']) ? $slide_meta['video_url'] : "";
-    $slide_url = !empty($slide_meta['slide_url']) ? $slide_meta['slide_url'] : get_permalink();
-    $isVideo =  (!empty($video_url) && $video_url != "")? true : false;
-	?>
-	
-	<div class="item <?php print $isVideo ?"video-slide": "";?>">
-	<?php
-
-	     
-			if ( $isVideo ){
-        $post_embed = $wp_embed->run_shortcode('[embed width="' . $basic_slide_options['slide_width'] . '" height="' . $basic_slide_options['slide_height'] . '"]' . $video_url . '[/embed]');
-        print $post_embed;
-			}
-			else{ ?>
-        <a class="image" href="<?php print $slide_url; ?>" >
-        <?php the_post_thumbnail('basic_slideshow'); ?>
-        </a>
-        	
-          <?php // HERE we print the transparent overlay and text ?>
-          <div class="meta">
-            <h3><a href="<?php print $slide_url; ?>" title="Permanent Link to <?php the_title_attribute(); ?>"><?php the_title(); ?></a></h3>
             
-            <?php the_excerpt(); //Here's the body of the content type gets printed ?>
-          </div>
-          <div class="meta-back">&nbsp;</div>
-          
-        <?php
-      }
-			
-	?>
-		<div style="clear: both"></div>
-	</div>
-
-	<?php endwhile; ?>
-	</div>
-</div>
-
-<?php
+          <?php
+        }
+  			
+  	?>
+  		<div style="clear: both"></div>
+  	</div>
+  
+  	<?php endwhile; ?>
+  	</div>
+  </div>
+  
+  <?php
+}
   //Reset all the changes we've made to wp_query so that any loops below this will work properly
 	wp_reset_query();
   remove_filter('excerpt_more', 'new_excerpt_more');

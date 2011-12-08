@@ -1,36 +1,35 @@
 function create_slideshow() {
   var slideshow = jQuery('div#basic_slideshow div.list');
-
-  slideshow.after('<button class="button" id="jqc-prev">&laquo;</button>')
-	         .after('<button class="button" id="jqc-next">&raquo;</button>')
-	         .after('<div id="slideshow_pager"></div>');
-	
-	
+		
     //Grab the variables that the wordpress admin page will give us
     var slideTime = slideshow_settings.slide_time > 0 ? (slideshow_settings.slide_time * 1000) : 5000;
     var speed = slideshow_settings.slide_time > 0 ? slideshow_settings.transition_speed : 500;
-    var scrollType = slideshow_settings.slide_time.length > 1 ? slideshow_settings.transition_type : "scrollHorz";
+    var scrollType = slideshow_settings.slide_time.length > 1 ? slideshow_settings.transition_type : "fade";
     
     var slide_unit = slideshow_settings.slide_unit in {'px':'', 'em':'', '%':''} ? slideshow_settings.slide_unit : 'px';
     var slide_width = slideshow_settings.slide_width > 0 ? slideshow_settings.slide_width + slide_unit : '550px';
     var slide_height = slideshow_settings.slide_height > 0 ? slideshow_settings.slide_height + slide_unit: '330px';
 
-    
-    //Start the slideshow
-    	slideshow.cycle({
-    		fx: scrollType,
-    		cleartypeNoBg: true,
-    		speed: speed,
-    		pager: 'div#basic_slideshow #slideshow_pager',
-    		timeout: slideTime,
-    		prev: '#jqc-prev',
-    		next: '#jqc-next',
-    		fit: 1,
-    		width: slide_width,
-    		height: slide_height,
-     	});
-     	
-     	jQuery('#basic_slideshow').css({width: slide_width, height: slide_height});
+
+    slideshow.orbit({
+       animation: scrollType,        // fade, horizontal-slide, vertical-slide, horizontal-push
+       animationSpeed: speed,        // how fast animtions are
+       timer: true, 			           // true or false to have the timer
+       advanceSpeed: slideTime, 		 // if timer is enabled, time between transitions 
+       pauseOnHover: true, 		       // if you hover pauses the slider
+       startClockOnMouseOut: true, 	 // if clock should start on MouseOut
+       startClockOnMouseOutAfter: 1000, 	 // how long after MouseOut should the timer start again
+       directionalNav: true,           // manual advancing directional navs
+       captions: true,                // do you want captions?
+       captionAnimation: 'fade',      // fade, slideOpen, none
+       captionAnimationSpeed: 800, 	  // if so how quickly should they animate in
+       bullets: true,			            // true or false to activate the bullet navigation
+       bulletThumbs: false,		        // thumbnails for the bullets
+       bulletThumbLocation: '',		    // location from this file where thumbs will be
+       afterSlideChange: function(){}, 	 // empty function 
+       fluid: true                         // or set a aspect ratio for content slides (ex: '4x3') 
+    });
+
 }
 
 
@@ -43,38 +42,6 @@ function create_slideshow() {
 jQuery(document).ready(function() {
 	jQuery.noConflict();
 	create_slideshow();
-
-      //Stop the slideshow if the user clicks on anything
-      var slideshow = jQuery('div#basic_slideshow div.list');
-      var buttons = jQuery('div#basic_slideshow .button, div#basic_slideshow #slideshow_pager a');
-      
-      // Pause the slideshow when any part of the slide is clicked. 
-      // Resume the slideshow when any nav button is clicked.
-      slideshow.bind('click', function(){
-          slideshow.cycle('pause'); 
-          slideshow_settings.hardPaused = true; 
-          buttons.bind('click', function(event){
-              slideshow.cycle('resume');
-              slideshow_settings.hardPaused = false; 
-              buttons.unbind(event);
-          });
-       }); 
-       
-      // Pause the slideshow when any part of the slide is clicked. 
-      // Resume the slideshow when any nav button is clicked.
-      var pauseOnHover = slideshow_settings.pauseOnHover == 1 ? true : false;
-      if (pauseOnHover){
-        slideshow.hover(
-            function(event){ 
-              slideshow.cycle('pause'); 
-            },
-            function(event){
-              if (!slideshow_settings.hardPaused){
-                slideshow.cycle('resume');
-              }
-            }
-        );
-      }
 
 });
 /*****************************************************
@@ -102,12 +69,12 @@ function handlePlayerStateChange (state) {
     case 1:
     case 3:
       // Video has begun playing/buffering
-      slideshow.cycle('pause');
+      //slideshow.cycle('pause');
       break;
     case 2:
     case 0:
       // Video has been paused/ended
-      slideshow.cycle('resume');
+      //slideshow.cycle('resume');
       break;
   }
 }

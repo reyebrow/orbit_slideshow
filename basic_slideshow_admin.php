@@ -65,6 +65,27 @@ function basic_save_page_info_meta_box()
 }
 add_action( 'save_post', 'basic_save_page_info_meta_box');
 
+/********************************************
+// Add a column in the manage posts page
+********************************************/
+
+add_filter('manage_edit-basic_slideshow_columns', 'slide_columns');
+function slide_columns($columns) {
+    $columns['slide_order'] = 'Slide Order';
+    return $columns;
+}
+
+
+add_action('manage_posts_custom_column',  'my_show_slide_columns');
+function my_show_slide_columns($name) {
+    global $post;
+    switch ($name) {
+        case 'slide_order':
+            $views = get_post_meta($post->ID, 'slide_weight', true);
+            echo $views;
+    }
+}
+
 
 
 /********************************************
@@ -109,7 +130,7 @@ function basic_slideshow_plugin_options() {
 
           $effectType[$params['transition_type']] = "selected=\"selected\"";
           
-          $effects_list = Array('blindX','blindY','blindZ','cover','curtainX','curtainY','fade','fadeZoom','growX','growY','none','scrollUp','scrollDown','scrollLeft','scrollRight','scrollHorz','scrollVert','shuffle','slideX','slideY','toss','turnUp','turnDown','turnLeft','turnRight','uncover','wipe','zoom');
+          $effects_list = Array('fade', 'horizontal-slide', 'vertical-slide', 'horizontal-push');
           
           ?>
           
