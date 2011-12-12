@@ -47,8 +47,8 @@ function basic_video_weighting_meta_box()
 function basic_video_meta_boxes()
 {
 global $post;
-  add_meta_box('post-video-url', __('Extra Slide Settings'), 'basic_video_url_meta_box', 'basic_slideshow', 'normal', 'high');
-  add_meta_box('post-slide-weight', __('Slide Order'), 'basic_video_weighting_meta_box', 'basic_slideshow', 'side', 'high');
+  add_meta_box('post-video-url', __('Extra Slide Settings'), 'basic_video_url_meta_box', 'basic_slideshow_type', 'normal', 'high');
+  add_meta_box('post-slide-weight', __('Slide Order'), 'basic_video_weighting_meta_box', 'basic_slideshow_type', 'side', 'high');
 
 }
 add_action('add_meta_boxes', 'basic_video_meta_boxes');
@@ -100,7 +100,7 @@ add_action('admin_menu', 'basic_slideshow_plugin_menu');
 add_action( 'admin_init', 'basic_slideshow_register_settings' );
 
 function basic_slideshow_plugin_menu() {
-  add_submenu_page('edit.php?post_type=basic_slideshow', 'Basic Slideshow Settings', 'Settings', 'manage_options', 're-slideshow-settings', 'basic_slideshow_plugin_options');
+  add_submenu_page('edit.php?post_type=basic_slideshow_type', 'Basic Slideshow Settings', 'Settings', 'manage_options', 're-slideshow-settings', 'basic_slideshow_plugin_options');
 	
 }
 
@@ -243,7 +243,7 @@ function basic_slideshow_sanitize($input){
   //Validate width
   $width = $input['slide_width'];
   if ( !is_numeric($width) || $width <=0 ){
-    add_settings_error('basic_slideshow',esc_attr('settings_updated'),__('width must be a positive integer.'),'error');
+    add_settings_error('basic_slideshow_type',esc_attr('settings_updated'),__('width must be a positive integer.'),'error');
     return false;
   }
   
@@ -251,33 +251,33 @@ function basic_slideshow_sanitize($input){
   //Validate height
   $test = $input['slide_height'];
   if ( !is_numeric($test) || $test <=0 ){
-    add_settings_error('basic_slideshow',esc_attr('settings_updated'),__('Height must be a positive integer.'),'error');
+    add_settings_error('basic_slideshow_type',esc_attr('settings_updated'),__('Height must be a positive integer.'),'error');
     return false;
   }
 
   //validate teaser length
   $test = $input['teaser_length'];
   if ( !is_numeric($test) || $test < 1 ){
-    add_settings_error('basic_slideshow',esc_attr('settings_updated'),__('Teaser Length must be greater than 1'),'error');
+    add_settings_error('basic_slideshow_type',esc_attr('settings_updated'),__('Teaser Length must be greater than 1'),'error');
     return false;
   }
   
     //validate transition speed
   $test = $input['transition_speed'];
   if ( !is_numeric($test) || $test < 1 ){
-    add_settings_error('basic_slideshow',esc_attr('settings_updated'),__('transition speed must be greater than 1ms'),'error');
+    add_settings_error('basic_slideshow_type',esc_attr('settings_updated'),__('transition speed must be greater than 1ms'),'error');
     return false;
   }
   
     //validate slide time
   $test = $input['slide_time'];
   if ( !is_numeric($test) || $test < 1 ){
-    add_settings_error('basic_slideshow',esc_attr('settings_updated'),__('Slide time must be greater than 1 second'),'error');
+    add_settings_error('basic_slideshow_type',esc_attr('settings_updated'),__('Slide time must be greater than 1 second'),'error');
     return false;
   }
 
   // Say our second option must be safe text with no HTML tags
-  add_settings_error('basic_slideshow',esc_attr('settings_updated'),__('Settings saved.'),'updated');
+  add_settings_error('basic_slideshow_type',esc_attr('settings_updated'),__('Settings saved.'),'updated');
   return $input;
 
 }
@@ -285,7 +285,7 @@ function basic_slideshow_sanitize($input){
 
 
 function basic_slideshow_errors() {
-    settings_errors( 'basic_slideshow' );
+    settings_errors( 'basic_slideshow_type' );
 }
 add_action( 'admin_notices', 'basic_slideshow_errors' );
 

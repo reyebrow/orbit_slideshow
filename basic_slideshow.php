@@ -56,7 +56,7 @@ add_action('wp_enqueue_scripts', 'basic_add_scripts');
 function basic_create_slideshow_posttype() {
   
   $labels = array(
-      'name' => _x('Slideshow', 'post type general name'),
+      'name' => _x('Slides', 'post type general name'),
       'singular_name' => _x('Slide', 'post type singular name'),
       'add_new' => _x('Add Slide','resources & tools'),
       'add_new_item' => __('Add New Slide'),
@@ -70,7 +70,7 @@ function basic_create_slideshow_posttype() {
   );
   
   $args = array(
-      'label' => __('Slideshow'),
+      'label' => __('Slide'),
       'labels' => $labels,
       'public' => true,
       'can_export' => true,
@@ -82,11 +82,41 @@ function basic_create_slideshow_posttype() {
       'hierarchical' => false,
       'rewrite' => array( "slug" => "slide" ),
       'supports'=> array('title', 'body', 'thumbnail', 'editor') ,
-      'show_in_nav_menus' => false,
-      'taxonomies' => array()
+      'show_in_nav_menus' => false
   );
-    
-  register_post_type( 'basic_slideshow', $args);
+  
+  //Add Slideshows as a taxonomy type
+	$slideshows_labels = array(
+	    'name' 						=> _x( 'Slideshows', 'taxonomy general name' ),
+	    'singular_name' 			=> _x( 'Slideshow', 'taxonomy singular name' ),
+	    'search_items' 				=> __( 'Search Slideshows' ),
+	    'all_items' 				=> __( 'All Slideshows' ),
+	    'parent_item' 				=> __( 'Parent Slideshow' ),
+	    'parent_item_colon' 		=> __( 'Parent Slideshow:' ),
+	    'edit_item' 				=> __( 'Edit Slideshows' ), 
+	    'update_item' 				=> __( 'Update Slideshow' ),
+	    'add_new_item' 				=> __( 'Add New Slideshow' ),
+	    'new_item_name' 			=> __( 'New Slideshows Name' ),
+	    'menu_name' 				=> __( 'Slideshows' ),
+	  ); 	
+
+	register_taxonomy('basic_slideshows', '', array(
+	  'hierarchical' 				=> true,
+	  'labels'	 					=> $slideshows_labels,
+	  'show_ui' 					=> true,
+	  'query_var' 					=> true,
+	  'rewrite' 					=> array( 'slug' => 'slideshow' ),
+	));
+	
+
+  //Register our "Slide" post type
+  register_post_type( 'basic_slideshow_type', $args);
+  
+  
+	//We want the option of adding regular posts to the slideshow
+	register_taxonomy_for_object_type('basic_slideshows', 	'post');
+	register_taxonomy_for_object_type('basic_slideshows', 	'page');
+	register_taxonomy_for_object_type('basic_slideshows', 	'basic_slideshow_type');  
 
 }
 add_action( 'init', 'basic_create_slideshow_posttype' );
@@ -102,7 +132,7 @@ function basic_slideshow_custom_excerpt(){
 // Do the actual slideshow
 ********************************************/
 
-function basic_slideshow() {
+function basic_slideshow($args="") {
 
   global $wp_query;
   global $post;
@@ -111,7 +141,7 @@ function basic_slideshow() {
   //$query_vars = $wp_query->query_vars;
   $query_vars = array();
 
-  $query_vars['post_type'] = 'basic_slideshow';
+  $query_vars['post_type'] = 'basic_slideshow_type';
 
   $query_vars['meta_key']  = 'slide_weight';
   $query_vars['orderby'] = 'meta_value';
@@ -156,7 +186,7 @@ if ($slide_query->have_posts()){
   			}
   			else{ ?>
           <a class="image" href="<?php print $slide_url; ?>" >
-          <?php the_post_thumbnail('basic_slideshow'); ?>
+          <?php the_post_thumbnail('basic_slideshow_type'); ?>
           </a>
           	
             <?php // HERE we print the transparent overlay and text ?>

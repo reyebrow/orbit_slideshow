@@ -33,14 +33,6 @@ background: white;
 }
 
 
-#basic_slideshow img, .widget img {}
-
-#basic_slideshow .video-slide {}
-#basic_slideshow .video-slide object embed {}
-
-#basic_slideshow h3 {}
-#basic_slideshow h3 a:hover, div#slideshow h3 a:active {	}
-#basic_slideshow p {}
 
 /********************************************
 // The Buttons
@@ -64,12 +56,4 @@ background: white;
 }
 
 
-/********************************************
-// The Pager
-********************************************/
-
-#basic_slideshow #slideshow_pager{}
-#basic_slideshow #slideshow_pager a{}
-#basic_slideshow #slideshow_pager a.activeSlide{}
-#basic_slideshow #slideshow_pager a:hover{}
 
