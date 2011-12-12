@@ -1,6 +1,82 @@
 <?php
 
 /********************************************
+// Create the Custom 'Slideshow' Post Type
+********************************************/
+
+function basic_create_slideshow_posttype() {
+  
+  
+  $basic_slide_options = get_option('basic_slideshow_options');
+  
+  $labels = array(
+      'name' => _x('Slides', 'post type general name'),
+      'singular_name' => _x('Slide', 'post type singular name'),
+      'add_new' => _x('Add Slide','resources & tools'),
+      'add_new_item' => __('Add New Slide'),
+      'edit_item' => __('Edit Slide'),
+      'new_item' => __('New Slide'),
+      'view_item' => __('View Slide'),
+      'search_items' => __('Search Slides'),
+      'not_found' =>  __('No Slides Found'),
+      'not_found_in_trash' => __('No Slides found in Trash'),
+      'parent_item_colon' => '',
+  );
+  
+  $args = array(
+      'label' => __('Slide'),
+      'labels' => $labels,
+      'public' => true,
+      'can_export' => true,
+      'show_ui' => true,
+      '_builtin' => false,
+      '_edit_link' => 'post.php?post=%d', // ?
+      'capability_type' => 'post',
+      'menu_icon' => plugins_url('/images/slide.gif', __FILE__),
+      'hierarchical' => false,
+      'rewrite' => array( "slug" => "slide" ),
+      'supports'=> array('title', 'body', 'thumbnail', 'editor') ,
+      'show_in_nav_menus' => false
+  );
+  
+  //Add Slideshows as a taxonomy type
+	$slideshows_labels = array(
+	    'name' 						=> _x( 'Slideshows', 'taxonomy general name' ),
+	    'singular_name' 			=> _x( 'Slideshow', 'taxonomy singular name' ),
+	    'search_items' 				=> __( 'Search Slideshows' ),
+	    'all_items' 				=> __( 'All Slideshows' ),
+	    'parent_item' 				=> __( 'Parent Slideshow' ),
+	    'parent_item_colon' 		=> __( 'Parent Slideshow:' ),
+	    'edit_item' 				=> __( 'Edit Slideshows' ), 
+	    'update_item' 				=> __( 'Update Slideshow' ),
+	    'add_new_item' 				=> __( 'Add New Slideshow' ),
+	    'new_item_name' 			=> __( 'New Slideshows Name' ),
+	    'menu_name' 				=> __( 'Slideshows' ),
+	  ); 	
+
+	register_taxonomy('basic_slideshows', '', array(
+	  'hierarchical' 				=> true,
+	  'labels'	 					=> $slideshows_labels,
+	  'show_ui' 					=> true,
+	  'query_var' 					=> true,
+	  'rewrite' 					=> array( 'slug' => 'slideshow' ),
+	));
+	
+
+  //Register our "Slide" post type
+  register_post_type( 'basic_slideshow_type', $args);
+  
+  
+	//We want the option of adding regular posts to the slideshow
+	if ($basic_slide_options['type']['post']) register_taxonomy_for_object_type('basic_slideshows', 	'post');
+	if ($basic_slide_options['type']['page']) register_taxonomy_for_object_type('basic_slideshows', 	'page');
+	if ($basic_slide_options['type']['slide']) register_taxonomy_for_object_type('basic_slideshows', 	'basic_slideshow_type');  
+
+}
+add_action( 'init', 'basic_create_slideshow_posttype' );
+
+
+/********************************************
 // Add in a Special metaboxes on our 
 // content pages
 ********************************************/
