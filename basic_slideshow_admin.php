@@ -121,15 +121,21 @@ function basic_slideshow_plugin_options() {
           <?php    
           $params = get_option('basic_slideshow_options');   
           
-          $width = $params[slide_width] > 0 ? $params[slide_width] : 550;
-          $height = $params[slide_height] > 0 ? $params[slide_height] : 330;
-          $tease = $params[teaser_length] > 0 ? $params[teaser_length] : 50;
-
-          $slide_time = $params[slide_time] > 0 ? $params[slide_time] : 5;
-          $transition_speed = $params[transition_speed] > 0 ? $params[transition_speed] : 500;
-          $transition_type = $params[transition_type] > 0 ? $params[transition_type] : 500;
+          $width = $params['slide_width'] > 0 ? $params['slide_width'] : 550;
+          $height = $params['slide_height'] > 0 ? $params['slide_height'] : 330;
+          $tease = $params['teaser_length'] > 0 ? $params['teaser_length'] : 50;
           
-          $pauseOnHover = $params[pauseOnHover] == 1 ?  "checked=\"checked\"" : "";
+          //print "<pre>".print_r($params,1)."</pre>";
+          
+          $slide_type = $params['type']['slide'] == 1 ? "checked=\"checked\"" : "";
+          $post_type = $params['type']['post'] == 1 ? "checked=\"checked\"" : "";
+          $page_type = $params['type']['page'] == 1 ? "checked=\"checked\"" : "";
+
+          $slide_time = $params['slide_time'] > 0 ? $params['slide_time'] : 5;
+          $transition_speed = $params['transition_speed'] > 0 ? $params['transition_speed'] : 500;
+          $transition_type = $params['transition_type'] > 0 ? $params['transition_type'] : 500;
+          
+          $pauseOnHover = $params['pauseOnHover'] == 1 ?  "checked=\"checked\"" : "";
           
 
           $effectType[$params['transition_type']] = "selected=\"selected\"";
@@ -172,6 +178,16 @@ function basic_slideshow_plugin_options() {
             <input type="checkbox" name="basic_slideshow_options[pauseOnHover]" <?php print $pauseOnHover; ?> value="1" /> Pause the slideshow when the mouse hovers over it?                  
             </td>
           </tr>  
+
+          <tr valign="top">
+          <td scope="row">Types allowed in the Slideshow</td>
+          <td>
+            <input type="checkbox" name="basic_slideshow_options[type][slide]" <?php print $slide_type; ?> value="1" /><label for="basic_slideshow_options[type][slide]">Slide</label>
+            <input type="checkbox" name="basic_slideshow_options[type][post]" <?php print $post_type; ?> value="1" /><label for="basic_slideshow_options[type][post]">Posts</label>
+            <input type="checkbox" name="basic_slideshow_options[type][page]" <?php print $page_type; ?> value="1" /><label for="basic_slideshow_options[type][page]">Pages</label>               
+            <p>In addition to a special "slide" type you can also add pages and posts to the slideshow if you want.</p>
+            </td>
+          </tr> 
 
           <tr valign="top">
           <td scope="row">Transition Speed</td>
