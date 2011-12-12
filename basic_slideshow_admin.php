@@ -83,7 +83,7 @@ add_action( 'init', 'basic_create_slideshow_posttype' );
 
 
 // Describe the actual metaboxes
-function basic_video_url_meta_box()
+function basic_slideshow_extras_meta_box()
 {
 	global $post;
 	$slide_meta = get_post_meta($post->ID, 'slide_meta', true);	
@@ -93,16 +93,19 @@ function basic_video_url_meta_box()
 	<textarea type="text" style="width: 90%;" name="slide_meta[slide_caption]" id="slide_caption"/><?php echo $slide_meta['slide_caption']; ?></textarea><br /><br />
 	<p>Foundation's Orbit plugin includes support for captions. Captions can include HTML</p>
 	
-	<label for="slide_meta[video_url]">Video URL (optional):</label><br />
-	<input type="text" style="width: 90%;" name="slide_meta[video_url]" id="video_url" value="<?php echo $slide_meta['video_url']; ?>" /><br /><br />
-	<p><em>Note: only use this field if you intend this to be a video slide. Making a slide into a video slide means the title and the body text won't show.</em><br/>
-	Any <a href="http://codex.wordpress.org/Embeds" target="_blank">oembed</a> url should work here. Youtube videos work great if you use the shortenned share url (http://youtu.be/xxxxxxxxx). <br/>
-	Vimeo works but won't pause properly when you change slides so be aware of that.</p>
-	
-	<label for="slide_meta[slide_url]">Link (optional):</label><br />
-	<input type="text" style="width: 90%;"  name="slide_meta[slide_url]" id="slide_url" value="<?php echo $slide_meta['slide_url']; ?>" /><br /><br />
-	This slide will link to its own post by default. Put something else in here or simply put &lt;none&gt; for no link.	
-	<?php
+	<?php 
+  //Only slides can be videos
+	if ($post->post_type=="basic_slideshow_type"){ ?>
+  	<label for="slide_meta[video_url]">Video URL (optional):</label><br />
+  	<input type="text" style="width: 90%;" name="slide_meta[video_url]" id="video_url" value="<?php echo $slide_meta['video_url']; ?>" /><br /><br />
+  	<p><em>Note: only use this field if you intend this to be a video slide. Making a slide into a video slide means the title and the body text won't show.</em><br/>
+  	Any <a href="http://codex.wordpress.org/Embeds" target="_blank">oembed</a> url should work here. Youtube videos work great if you use the shortenned share url (http://youtu.be/xxxxxxxxx). <br/>
+  	Vimeo works but won't pause properly when you change slides so be aware of that.</p>
+  	
+  	<label for="slide_meta[slide_url]">Link (optional):</label><br />
+  	<input type="text" style="width: 90%;"  name="slide_meta[slide_url]" id="slide_url" value="<?php echo $slide_meta['slide_url']; ?>" /><br /><br />
+  	This slide will link to its own post by default. Put something else in here or simply put &lt;none&gt; for no link.	
+	<?php }
 }
 
 
@@ -120,20 +123,26 @@ function basic_video_weighting_meta_box()
 
 
 //Add the metabox to the slide type
-function basic_video_meta_boxes()
+function basic_slideshow_add_meta_boxes()
 {
-global $post;
+  global $post;
   $basic_slide_options = get_option('basic_slideshow_options');
   
-  if ($basic_slide_options['type']['post']) add_meta_box('post-slide-weight', __('Slide Order'), 'basic_video_weighting_meta_box', 'post', 'side', 'high');
-  if ($basic_slide_options['type']['page']) add_meta_box('post-slide-weight', __('Slide Order'), 'basic_video_weighting_meta_box', 'page', 'side', 'high');
-  if ($basic_slide_options['type']['slide']) add_meta_box('post-slide-weight', __('Slide Order'), 'basic_video_weighting_meta_box', 'basic_slideshow_type', 'side', 'high');
-  
-  add_meta_box('post-video-url', __('Extra Slide Settings'), 'basic_video_url_meta_box', 'basic_slideshow_type', 'normal', 'high');
-  add_meta_box('post-slide-weight', __('Slide Order'), 'basic_video_weighting_meta_box', 'basic_slideshow_type', 'side', 'high');
+  if ($basic_slide_options['type']['post']) {
+    add_meta_box('post-slide-weight', __('Slide Order'), 'basic_video_weighting_meta_box', 'post', 'side', 'high');
+    add_meta_box('post-video-url', __('Extra Slide Settings'), 'basic_slideshow_extras_meta_box', 'post', 'normal', 'high');
+  }
+  if ($basic_slide_options['type']['page']) {
+    add_meta_box('post-slide-weight', __('Slide Order'), 'basic_video_weighting_meta_box', 'page', 'side', 'high');
+    add_meta_box('post-video-url', __('Extra Slide Settings'), 'basic_slideshow_extras_meta_box', 'page', 'normal', 'high');
+  }
+  if ($basic_slide_options['type']['slide']) {
+    add_meta_box('post-slide-weight', __('Slide Order'), 'basic_video_weighting_meta_box', 'basic_slideshow_type', 'side', 'high');
+    add_meta_box('post-video-url', __('Extra Slide Settings'), 'basic_slideshow_extras_meta_box', 'basic_slideshow_type', 'normal', 'high');
+  }
 
 }
-add_action('add_meta_boxes', 'basic_video_meta_boxes');
+add_action('add_meta_boxes', 'basic_slideshow_add_meta_boxes');
 
 
 //Save metabox info
