@@ -131,8 +131,8 @@ function basic_slideshow_custom_excerpt(){
 /********************************************
 // Do the actual slideshow
 ********************************************/
-
-function basic_slideshow($args="") {
+//This is just a shortcode handler that we can call directly.
+function basic_slideshow($atts=Array() ) {
 
   global $wp_query;
   global $post;
@@ -140,6 +140,10 @@ function basic_slideshow($args="") {
   
   //$query_vars = $wp_query->query_vars;
   $query_vars = array();
+  
+  
+  //TODO: DEFAULT QUERY WHEN NO SLIDESHOW GIVEN
+  if (!isset($args['slideshow'])){}
 
   $query_vars['post_type'] = 'basic_slideshow_type';
 
