@@ -104,7 +104,7 @@ function basic_slideshow_custom_excerpt(){
 
 function basic_slideshow() {
 
-	global $wp_query;
+  global $wp_query;
   global $post;
   global $wp_embed;
   
@@ -122,27 +122,34 @@ function basic_slideshow() {
   add_filter('excerpt_length', 'basic_slideshow_custom_excerpt', 10);
   add_filter('excerpt_more', 'new_excerpt_more');
 
+	$captions="";
+
   //query_posts($query_vars);
   $slide_query = new WP_Query( $query_vars );
 //print_r($slide_query);
 
 if ($slide_query->have_posts()){
   ?>
-  
   <div id="basic_slideshow">
-    <div class="list">
   	<?php while ($slide_query->have_posts()) : $slide_query->the_post(); ?>
   	<?php
       $slide_meta = get_post_meta($post->ID, 'slide_meta', true);	
+      $captionTarget = "";
       $video_url = !empty($slide_meta['video_url']) ? $slide_meta['video_url'] : "";
       $slide_url = !empty($slide_meta['slide_url']) ? $slide_meta['slide_url'] : get_permalink();
       $isVideo =  (!empty($video_url) && $video_url != "")? true : false;
-  	?>
+
+	  //IF this slide has a caption then print it out for inclusion later      
+      if (!empty($slide_meta['slide_caption']) && $slide_meta['slide_caption'] != ""){
+      	  $captionID ++;
+      	  $captionTarget = "data-caption='#caption$captionID'";
+	      $captions .= "<span class='orbit-caption' id='caption$captionID'>";
+	      $captions .= $slide_meta['slide_caption'];
+	      $captions .= "</span>";
+      } ?>
   	
-  	<div class="item <?php print $isVideo ?"video-slide": "";?>">
+  	<div class="item <?php print $isVideo ?"video-slide": "";?>" <?php print $captionTarget; ?>>
   	<?php
-  
-  	     
   			if ( $isVideo ){
           $post_embed = $wp_embed->run_shortcode('[embed width="' . $basic_slide_options['slide_width'] . '" height="' . $basic_slide_options['slide_height'] . '"]' . $video_url . '[/embed]');
           print $post_embed;
@@ -169,7 +176,7 @@ if ($slide_query->have_posts()){
   	</div>
   
   	<?php endwhile; ?>
-  	</div>
+	<?php print $captions;?>
   </div>
   
   <?php

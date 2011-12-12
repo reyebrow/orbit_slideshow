@@ -1,5 +1,5 @@
 function create_slideshow() {
-  var slideshow = jQuery('div#basic_slideshow div.list');
+  var slideshow = jQuery('#basic_slideshow');
 		
     //Grab the variables that the wordpress admin page will give us
     var slideTime = slideshow_settings.slide_time > 0 ? (slideshow_settings.slide_time * 1000) : 5000;
@@ -22,12 +22,12 @@ function create_slideshow() {
        directionalNav: true,           // manual advancing directional navs
        captions: true,                // do you want captions?
        captionAnimation: 'fade',      // fade, slideOpen, none
-       captionAnimationSpeed: 800, 	  // if so how quickly should they animate in
+       captionAnimationSpeed: 2800, 	  // if so how quickly should they animate in
        bullets: true,			            // true or false to activate the bullet navigation
        bulletThumbs: false,		        // thumbnails for the bullets
        bulletThumbLocation: '',		    // location from this file where thumbs will be
        afterSlideChange: function(){}, 	 // empty function 
-       fluid: true                         // or set a aspect ratio for content slides (ex: '4x3') 
+       fluid: slideshow_settings.slide_width+'x'+slideshow_settings.slide_height              // or set a aspect ratio for content slides (ex: '4x3') 
     });
 
 }

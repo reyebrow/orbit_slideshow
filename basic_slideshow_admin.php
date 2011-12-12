@@ -13,6 +13,10 @@ function basic_video_url_meta_box()
 	$slide_meta = get_post_meta($post->ID, 'slide_meta', true);	
 	
 	?>
+	<label for="slide_meta[slide_caption]">Slide Caption:</label><br />
+	<textarea type="text" style="width: 90%;" name="slide_meta[slide_caption]" id="slide_caption"/><?php echo $slide_meta['slide_caption']; ?></textarea><br /><br />
+	<p>Foundation's Orbit plugin includes support for captions. Captions can include HTML</p>
+	
 	<label for="slide_meta[video_url]">Video URL (optional):</label><br />
 	<input type="text" style="width: 90%;" name="slide_meta[video_url]" id="video_url" value="<?php echo $slide_meta['video_url']; ?>" /><br /><br />
 	<p><em>Note: only use this field if you intend this to be a video slide. Making a slide into a video slide means the title and the body text won't show.</em><br/>
@@ -109,7 +113,7 @@ function basic_slideshow_plugin_options() {
   <h2>Basic Slideshow Settings Page</h2>
   <form method="post" action="options.php">
       <?php settings_fields( 're-slideshow-settings-group' ); ?>
-      <?php do_settings_fields( 're-slideshow-settings-group' ); ?>
+      <?php //do_settings_fields( 're-slideshow-settings-group' ); ?>
       <table class="form-table">
           <tr valign="top">
           <td scope="row">Slide Dimensions</td>
