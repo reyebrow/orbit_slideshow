@@ -47,6 +47,12 @@ function basic_video_weighting_meta_box()
 function basic_video_meta_boxes()
 {
 global $post;
+  $basic_slide_options = get_option('basic_slideshow_options');
+  
+  if ($basic_slide_options['type']['post']) add_meta_box('post-slide-weight', __('Slide Order'), 'basic_video_weighting_meta_box', 'post', 'side', 'high');
+  if ($basic_slide_options['type']['page']) add_meta_box('post-slide-weight', __('Slide Order'), 'basic_video_weighting_meta_box', 'page', 'side', 'high');
+  if ($basic_slide_options['type']['slide']) add_meta_box('post-slide-weight', __('Slide Order'), 'basic_video_weighting_meta_box', 'basic_slideshow_type', 'side', 'high');
+  
   add_meta_box('post-video-url', __('Extra Slide Settings'), 'basic_video_url_meta_box', 'basic_slideshow_type', 'normal', 'high');
   add_meta_box('post-slide-weight', __('Slide Order'), 'basic_video_weighting_meta_box', 'basic_slideshow_type', 'side', 'high');
 

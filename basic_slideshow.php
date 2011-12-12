@@ -55,6 +55,9 @@ add_action('wp_enqueue_scripts', 'basic_add_scripts');
 
 function basic_create_slideshow_posttype() {
   
+  
+  $basic_slide_options = get_option('basic_slideshow_options');
+  
   $labels = array(
       'name' => _x('Slides', 'post type general name'),
       'singular_name' => _x('Slide', 'post type singular name'),
@@ -114,9 +117,9 @@ function basic_create_slideshow_posttype() {
   
   
 	//We want the option of adding regular posts to the slideshow
-	register_taxonomy_for_object_type('basic_slideshows', 	'post');
-	register_taxonomy_for_object_type('basic_slideshows', 	'page');
-	register_taxonomy_for_object_type('basic_slideshows', 	'basic_slideshow_type');  
+	if ($basic_slide_options['type']['post']) register_taxonomy_for_object_type('basic_slideshows', 	'post');
+	if ($basic_slide_options['type']['page']) register_taxonomy_for_object_type('basic_slideshows', 	'page');
+	if ($basic_slide_options['type']['slide']) register_taxonomy_for_object_type('basic_slideshows', 	'basic_slideshow_type');  
 
 }
 add_action( 'init', 'basic_create_slideshow_posttype' );
@@ -143,9 +146,19 @@ function basic_slideshow($atts=Array() ) {
   
   
   //TODO: DEFAULT QUERY WHEN NO SLIDESHOW GIVEN
-  if (!isset($args['slideshow'])){}
+  if (!isset($args['slideshow'])){
+    //Set up for the default slideshow that only uses slides (not posts or pages)
+     $query_vars['post_type'] = 'basic_slideshow_type';
+  }
+  else {
+    //set up for multiple slideshows
+    $query_vars['post_type'] = '';  
+  	if ($basic_slide_options['type']['post']) $query_vars['post_type'] .= 'basic_slideshow_type';
+  	if ($basic_slide_options['type']['page']) $query_vars['post_type'] .= 'basic_slideshow_type';
+  	if ($basic_slide_options['type']['slide']) $query_vars['post_type'] .= 'basic_slideshow_type'; 
+    $query_vars['post_type'] = trim($query_vars['post_type'], ',');
 
-  $query_vars['post_type'] = 'basic_slideshow_type';
+  }
 
   $query_vars['meta_key']  = 'slide_weight';
   $query_vars['orderby'] = 'meta_value';
