@@ -13,7 +13,7 @@ $basic_slide_options = get_option('basic_slideshow_options');
 
 //Make sure we've got the right kind of images set up.
 add_theme_support('post-thumbnails');
-add_image_size('basic_slideshow', $basic_slide_options[slide_width],$basic_slide_options[slide_height],true);
+add_image_size('basic_slideshow', $basic_slide_options['slide_width'],$basic_slide_options['slide_height'],true);
 add_shortcode('basic_slideshow', 'basic_slideshow');
 
 
@@ -54,33 +54,36 @@ function basic_slideshow_custom_excerpt(){
   
 }
 
-/********************************************
-// Do the actual slideshow
-********************************************/
+/***************************************************
+// Shortcode Handler: Do the actual slideshow Query
+****************************************************/
 //This is just a shortcode handler that we can call directly.
 function basic_slideshow($atts=Array() ) {
 
   global $wp_query;
   global $post;
-  global $wp_embed;
   
   //$query_vars = $wp_query->query_vars;
   $query_vars = array();
   
   
-  //TODO: DEFAULT QUERY WHEN NO SLIDESHOW GIVEN
-  if (!isset($args['slideshow'])){
-    //Set up for the default slideshow that only uses slides (not posts or pages)
+  //TODO: DEFAULT QUERY WHEN NO SLIDESHOW GIVEN vs. SLIDESHOW GIVEN
+  //No 'Slideshow' param set. Just do the default slideshow
+  if (!isset($args['slideshow'])){  
      $query_vars['post_type'] = 'basic_slideshow_type';
   }
-  else {
-    //set up for multiple slideshows
-    $query_vars['post_type'] = '';  
-  	if ($basic_slide_options['type']['post']) $query_vars['post_type'] .= 'basic_slideshow_type';
-  	if ($basic_slide_options['type']['page']) $query_vars['post_type'] .= 'basic_slideshow_type';
-  	if ($basic_slide_options['type']['slide']) $query_vars['post_type'] .= 'basic_slideshow_type'; 
-    $query_vars['post_type'] = trim($query_vars['post_type'], ',');
-
+  //'Slideshow' paramter is set: set things up for a specific slideshow
+  else {    
+    $query_vars['post_type'] = array();  
+  	if ($basic_slide_options['type']['post']) $query_vars['post_type'][] = 'post';
+  	if ($basic_slide_options['type']['page']) $query_vars['post_type'][] = 'page';
+  	if ($basic_slide_options['type']['slide']) $query_vars['post_type'][] = 'basic_slideshow_type'; 
+  
+  	$query_vars['tax_query'] = array(
+  		'taxonomy' => 'basic_slideshows',
+  		'field' => 'slug',
+  		'terms' => $args['slideshow']
+  	);
   }
 
   $query_vars['meta_key']  = 'slide_weight';
@@ -92,24 +95,47 @@ function basic_slideshow($atts=Array() ) {
   add_filter('excerpt_length', 'basic_slideshow_custom_excerpt', 10);
   add_filter('excerpt_more', 'new_excerpt_more');
 
-	$captions="";
 
   //query_posts($query_vars);
   $slide_query = new WP_Query( $query_vars );
-//print_r($slide_query);
+  //print_r($slide_query);
 
-if ($slide_query->have_posts()){
+  if ($slide_query->have_posts()){
+    if (isset($atts['TabShow']) && $atts['TabShow'] == True ){
+      basic_slideshow_do_tabshow($slide_query, $slideshow);
+    }
+    else {
+      basic_slideshow_do_slideshow($slide_query, $slideshow);
+    }
+  
+  }
+  //Reset all the changes we've made to wp_query so that any loops below this will work properly
+	wp_reset_query();
+  remove_filter('excerpt_more', 'new_excerpt_more');
+	remove_filter('excerpt_length','basic_slideshow_custom_excerpt');
+}
+
+/********************************************
+// Helper Function to do the Actual Slideshow
+********************************************/
+function basic_slideshow_do_slideshow($slide_query, $slideshow="default") {
+
+  //TODO: Add better structure for foundation-friendly 
+  global $wp_embed;
+  
+  $captions="";
+
   ?>
-  <div id="basic_slideshow">
+  <div id="basic_slideshow" class="<?php print $slideshow; ?>">
   	<?php while ($slide_query->have_posts()) : $slide_query->the_post(); ?>
   	<?php
-      $slide_meta = get_post_meta($post->ID, 'slide_meta', true);	
+      $slide_meta = get_post_meta($slide_query->post->ID, 'slide_meta', true);	
       $captionTarget = "";
       $video_url = !empty($slide_meta['video_url']) ? $slide_meta['video_url'] : "";
       $slide_url = !empty($slide_meta['slide_url']) ? $slide_meta['slide_url'] : get_permalink();
       $isVideo =  (!empty($video_url) && $video_url != "")? true : false;
 
-	  //IF this slide has a caption then print it out for inclusion later      
+	    //IF this slide has a caption then print it out for inclusion later      
       if (!empty($slide_meta['slide_caption']) && $slide_meta['slide_caption'] != ""){
       	  $captionID ++;
       	  $captionTarget = "data-caption='#caption$captionID'";
@@ -118,7 +144,7 @@ if ($slide_query->have_posts()){
 	      $captions .= "</span>";
       } ?>
   	
-  	<div class="item <?php print $isVideo ?"video-slide": "";?>" <?php print $captionTarget; ?>>
+  	<div class="slide <?php print $isVideo ?"video-slide": "";?>" <?php print $captionTarget; ?>>
   	<?php
   			if ( $isVideo ){
           $post_embed = $wp_embed->run_shortcode('[embed width="' . $basic_slide_options['slide_width'] . '" height="' . $basic_slide_options['slide_height'] . '"]' . $video_url . '[/embed]');
@@ -136,28 +162,90 @@ if ($slide_query->have_posts()){
               
               <?php the_excerpt(); //Here's the body of the content type gets printed ?>
             </div>
-
-            
           <?php
         }
   			
   	?>
-  		<div style="clear: both"></div>
   	</div>
   
   	<?php endwhile; ?>
 	<?php print $captions;?>
-  </div>
+  </div> <?
+}
+
+/********************************************
+// Helper Function to do the TabShow
+********************************************/
+function basic_slideshow_do_tabshow($slide_query, $slideshow= "default"){
+
+  //TODO: Add better structure for foundation-friendly 
+  global $wp_embed;
+  $basic_slide_options = get_option('basic_slideshow_options');
+  $tabID = 0;
+    ?>
+
+<div id="basic_tabshow" class="row <?php print $slideshow; ?>">
+  <div class="eight columns">
+    <ul class="tabs-content" style="height: <?php print $basic_slide_options['slide_height']; ?>px;">
+    
+      <?php while ($slide_query->have_posts()) : $slide_query->the_post(); 
+
+        
+        $slide_meta = get_post_meta($slide_query->post->ID, 'slide_meta', true);	
+        $video_url = !empty($slide_meta['video_url']) ? $slide_meta['video_url'] : "";
+        $slide_url = !empty($slide_meta['slide_url']) ? $slide_meta['slide_url'] : get_permalink();
+        $isVideo =  (!empty($video_url) && $video_url != "")? true : false;
   
-  <?php
-}
-  //Reset all the changes we've made to wp_query so that any loops below this will work properly
-	wp_reset_query();
-  remove_filter('excerpt_more', 'new_excerpt_more');
-	remove_filter('excerpt_length','basic_slideshow_custom_excerpt');
-}
+        //if ( $tabID == 1 ) print_r(get_defined_vars());
+  	    //We need title tabs  
+        $tabID ++;
+        $active = $tabID == 1 ? "active " : "";
+        $tabsTarget = "tab".$tabID."Tab";
+	      $tabs .= "<dd><a href='#tab$tabID'>";
+	      $tabs .= "<h3>" . get_the_title() . "</h3>";
+	      $tabs .= $slide_meta['slide_caption'];//isset($slide_meta['slide_caption']) ? $slide_meta['slide_caption'] : "";
+	      $tabs .= "</a></dd>"; ?>
+        
+    
+        <li id="<?php print $tabsTarget; ?>" class="tab-content <?php print $active; print $isVideo ?"video-slide": "";?>">
+          <?php
+      			if ( $isVideo ){
+              $post_embed = $wp_embed->run_shortcode('[embed width="' . $basic_slide_options['slide_width'] . '" height="' . $basic_slide_options['slide_height'] . '"]' . $video_url . '[/embed]');
+              print $post_embed;
+      			}
+      			else{ ?>
+              <a class="image" href="<?php print $slide_url; ?>" >
+              <?php the_post_thumbnail('basic_slideshow_type'); ?>
+              </a>
+              	
+                <?php // HERE we print the transparent overlay and text ?>
+                <div class="meta-back">&nbsp;</div>
+                <div class="meta">
+                  <h3><a href="<?php print $slide_url; ?>" title="Permanent Link to <?php the_title_attribute(); ?>"><?php the_title(); ?></a></h3>
+                  
+                  <?php the_excerpt(); //Here's the body of the content type gets printed ?>
+                </div>
+              <?php
+            } ?>
+          	
+        </li>
+        
+        
+      <?php endwhile; ?>
+
+      
+    </ul>    
+  </div>
+  <div class="four columns">
+      <dl class="nice vertical tabs" style="margin-bottom:0">
+        <?php print $tabs; ?>
+		  </dl>
+  </div>
+</div>
 
 
+<?php
+}
 
 /********************************************
 // Change the excerpt size
