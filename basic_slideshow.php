@@ -13,7 +13,7 @@ $basic_slide_options = get_option('basic_slideshow_options');
 
 //Make sure we've got the right kind of images set up.
 add_theme_support('post-thumbnails');
-add_image_size('basic_slideshow', $basic_slide_options['slide_width'],$basic_slide_options['slide_height'],true);
+add_image_size('basic_slideshow_type', $basic_slide_options['slide_width'],$basic_slide_options['slide_height'],true);
 add_shortcode('basic_slideshow', 'basic_slideshow');
 
 
@@ -22,7 +22,7 @@ add_shortcode('basic_slideshow', 'basic_slideshow');
 function basic_add_scripts() {
   
   //You may have foundation loaded in your theme. If so there's no reason to do it twice.
-  print "<pre>" . print_r($wp_scripts,1) . "</pre>";
+  //print "<pre>" . print_r($wp_scripts,1) . "</pre>";
   
   wp_enqueue_script('jquery');
   
@@ -63,14 +63,15 @@ function basic_slideshow($atts=Array() ) {
   global $wp_query;
   global $post;
   
-  //$query_vars = $wp_query->query_vars;
+  $basic_slide_options = get_option('basic_slideshow_options');
+  
   $query_vars = array();
   
-  
-  //TODO: DEFAULT QUERY WHEN NO SLIDESHOW GIVEN vs. SLIDESHOW GIVEN
+  $slideshow= "";
   //No 'Slideshow' param set. Just do the default slideshow
-  if (!isset($args['slideshow'])){  
+  if (!isset($atts['slideshow'])){  
      $query_vars['post_type'] = 'basic_slideshow_type';
+     $slideshow = "default";
   }
   //'Slideshow' paramter is set: set things up for a specific slideshow
   else {    
@@ -78,14 +79,15 @@ function basic_slideshow($atts=Array() ) {
   	if ($basic_slide_options['type']['post']) $query_vars['post_type'][] = 'post';
   	if ($basic_slide_options['type']['page']) $query_vars['post_type'][] = 'page';
   	if ($basic_slide_options['type']['slide']) $query_vars['post_type'][] = 'basic_slideshow_type'; 
-  
-  	$query_vars['tax_query'] = array(
+    $slideshow= $atts['slideshow'];
+  	$query_vars['tax_query'] = array( array(
   		'taxonomy' => 'basic_slideshows',
   		'field' => 'slug',
-  		'terms' => $args['slideshow']
-  	);
+  		'terms' => $atts['slideshow']
+  	));
   }
 
+  //ORder by slide weight (if given)
   $query_vars['meta_key']  = 'slide_weight';
   $query_vars['orderby'] = 'meta_value';
   $query_vars['order'] = 'ASC';  
@@ -98,10 +100,11 @@ function basic_slideshow($atts=Array() ) {
 
   //query_posts($query_vars);
   $slide_query = new WP_Query( $query_vars );
-  //print_r($slide_query);
+
+  //print "<pre>" . print_r($slide_query,1) . "</pre>";
 
   if ($slide_query->have_posts()){
-    if (isset($atts['TabShow']) && $atts['TabShow'] == True ){
+    if (isset($atts['tabshow']) && $atts['tabshow'] == True ){
       basic_slideshow_do_tabshow($slide_query, $slideshow);
     }
     else {
@@ -118,7 +121,7 @@ function basic_slideshow($atts=Array() ) {
 /********************************************
 // Helper Function to do the Actual Slideshow
 ********************************************/
-function basic_slideshow_do_slideshow($slide_query, $slideshow="default") {
+function basic_slideshow_do_slideshow($slide_query, $slideshow="") {
 
   //TODO: Add better structure for foundation-friendly 
   global $wp_embed;
@@ -126,9 +129,8 @@ function basic_slideshow_do_slideshow($slide_query, $slideshow="default") {
   $captions="";
 
   ?>
-  <div id="basic_slideshow" class="<?php print $slideshow; ?>">
-  	<?php while ($slide_query->have_posts()) : $slide_query->the_post(); ?>
-  	<?php
+  <div id="slideshow-<?php print $slideshow; ?>" class="basic_slideshow">
+  	<?php while ($slide_query->have_posts()) : $slide_query->the_post();
       $slide_meta = get_post_meta($slide_query->post->ID, 'slide_meta', true);	
       $captionTarget = "";
       $video_url = !empty($slide_meta['video_url']) ? $slide_meta['video_url'] : "";
@@ -138,8 +140,8 @@ function basic_slideshow_do_slideshow($slide_query, $slideshow="default") {
 	    //IF this slide has a caption then print it out for inclusion later      
       if (!empty($slide_meta['slide_caption']) && $slide_meta['slide_caption'] != ""){
       	  $captionID ++;
-      	  $captionTarget = "data-caption='#caption$captionID'";
-	      $captions .= "<span class='orbit-caption' id='caption$captionID'>";
+      	  $captionTarget = "data-caption='#".$slideshow."-Caption$captionID'";
+	      $captions .= "<span class='orbit-caption' id='".$slideshow."-Caption$captionID'>";
 	      $captions .= $slide_meta['slide_caption'];
 	      $captions .= "</span>";
       } ?>
@@ -184,11 +186,11 @@ function basic_slideshow_do_tabshow($slide_query, $slideshow= "default"){
   $tabID = 0;
     ?>
 
-<div id="basic_tabshow" class="row <?php print $slideshow; ?>">
+<div id="tabshow-<?php print $slideshow; ?>" class="row basic_tabshow">
   <div class="eight columns">
     <ul class="tabs-content" style="height: <?php print $basic_slide_options['slide_height']; ?>px;">
     
-      <?php while ($slide_query->have_posts()) : $slide_query->the_post(); 
+    <?php while ($slide_query->have_posts()) : $slide_query->the_post(); 
 
         
         $slide_meta = get_post_meta($slide_query->post->ID, 'slide_meta', true);	
@@ -200,8 +202,8 @@ function basic_slideshow_do_tabshow($slide_query, $slideshow= "default"){
   	    //We need title tabs  
         $tabID ++;
         $active = $tabID == 1 ? "active " : "";
-        $tabsTarget = "tab".$tabID."Tab";
-	      $tabs .= "<dd><a href='#tab$tabID'>";
+        $tabsTarget = $slideshow."-tab".$tabID."Tab";
+	      $tabs .= "<dd><a href='#".$slideshow."-tab$tabID'>";
 	      $tabs .= "<h3>" . get_the_title() . "</h3>";
 	      $tabs .= $slide_meta['slide_caption'];//isset($slide_meta['slide_caption']) ? $slide_meta['slide_caption'] : "";
 	      $tabs .= "</a></dd>"; ?>
@@ -214,7 +216,7 @@ function basic_slideshow_do_tabshow($slide_query, $slideshow= "default"){
               print $post_embed;
       			}
       			else{ ?>
-              <a class="image" href="<?php print $slide_url; ?>" >
+              <a class="image" href="<?php print $slide_url; ?>" style="height: <?php print $basic_slide_options['slide_height']; ?>px;">
               <?php the_post_thumbnail('basic_slideshow_type'); ?>
               </a>
               	
@@ -230,8 +232,7 @@ function basic_slideshow_do_tabshow($slide_query, $slideshow= "default"){
           	
         </li>
         
-        
-      <?php endwhile; ?>
+    <?php endwhile; ?>
 
       
     </ul>    

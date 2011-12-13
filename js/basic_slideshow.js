@@ -1,5 +1,5 @@
 function create_slideshow() {
-  var slideshow = jQuery('#basic_slideshow');
+  var slideshow = jQuery('.basic_slideshow');
 		
     //Grab the variables that the wordpress admin page will give us
     var slideTime = slideshow_settings.slide_time > 0 ? (slideshow_settings.slide_time * 1000) : 5000;
@@ -10,25 +10,30 @@ function create_slideshow() {
     var slide_width = slideshow_settings.slide_width > 0 ? slideshow_settings.slide_width + slide_unit : '550px';
     var slide_height = slideshow_settings.slide_height > 0 ? slideshow_settings.slide_height + slide_unit: '330px';
 
+    slideshow.each(function(){
+    
+      jQuery(this).orbit({
+         animation: scrollType,        // fade, horizontal-slide, vertical-slide, horizontal-push
+         animationSpeed: speed,        // how fast animtions are
+         timer: true, 			           // true or false to have the timer
+         advanceSpeed: slideTime, 		 // if timer is enabled, time between transitions 
+         pauseOnHover: true, 		       // if you hover pauses the slider
+         startClockOnMouseOut: true, 	 // if clock should start on MouseOut
+         startClockOnMouseOutAfter: 1000, 	 // how long after MouseOut should the timer start again
+         directionalNav: true,           // manual advancing directional navs
+         captions: true,                // do you want captions?
+         captionAnimation: 'fade',      // fade, slideOpen, none
+         captionAnimationSpeed: 2800, 	  // if so how quickly should they animate in
+         bullets: true,			            // true or false to activate the bullet navigation
+         bulletThumbs: false,		        // thumbnails for the bullets
+         bulletThumbLocation: '',		    // location from this file where thumbs will be
+         afterSlideChange: function(){}, 	 // empty function 
+         //fluid: slideshow_settings.slide_width+'x'+slideshow_settings.slide_height              // or set a aspect ratio for content slides (ex: '4x3') 
 
-    slideshow.orbit({
-       animation: scrollType,        // fade, horizontal-slide, vertical-slide, horizontal-push
-       animationSpeed: speed,        // how fast animtions are
-       timer: true, 			           // true or false to have the timer
-       advanceSpeed: slideTime, 		 // if timer is enabled, time between transitions 
-       pauseOnHover: true, 		       // if you hover pauses the slider
-       startClockOnMouseOut: true, 	 // if clock should start on MouseOut
-       startClockOnMouseOutAfter: 1000, 	 // how long after MouseOut should the timer start again
-       directionalNav: true,           // manual advancing directional navs
-       captions: true,                // do you want captions?
-       captionAnimation: 'fade',      // fade, slideOpen, none
-       captionAnimationSpeed: 2800, 	  // if so how quickly should they animate in
-       bullets: true,			            // true or false to activate the bullet navigation
-       bulletThumbs: false,		        // thumbnails for the bullets
-       bulletThumbLocation: '',		    // location from this file where thumbs will be
-       afterSlideChange: function(){}, 	 // empty function 
-       fluid: slideshow_settings.slide_width+'x'+slideshow_settings.slide_height              // or set a aspect ratio for content slides (ex: '4x3') 
+      });    
+    
     });
+
 
 }
 

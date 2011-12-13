@@ -2,13 +2,13 @@
 // Slide Formatting
 ********************************************/
 
-#basic_slideshow {}
+.orbit-wrapper {}
  
-#basic_slideshow .slide {
+.orbit-wrapper .slide {
 background: white;
 }
-#basic_slideshow .slide .image {}
-#basic_slideshow .slide .meta {
+.orbit-wrapper .slide .image {}
+.orbit-wrapper .slide .meta {
   position: absolute;
   padding: 10px 20px;
   top: 50%;
@@ -17,10 +17,10 @@ background: white;
   height: 30%;
   color: white;
 }
-#basic_slideshow .slide .meta h3, #basic_slideshow .slide .meta h3 a{}
+.orbit-wrapper .slide .meta h3, .orbit-wrapper .slide .meta h3 a{}
 
 
-#basic_slideshow .slide .meta-back {
+.orbit-wrapper .slide .meta-back {
   position: absolute;
   top: 50%;
   left: 0%;
@@ -35,13 +35,13 @@ background: white;
 // Tabbed Formatting
 ********************************************/
 
-#basic_tabshow {}
+.basic_tabshow {}
  
-#basic_tabshow .tab-content {
+.basic_tabshow .tab-content {
 background: white;
 }
-#basic_tabshow .tab-content .image {}
-#basic_tabshow .tab-content .meta {
+.basic_tabshow .tab-content .image {}
+.basic_tabshow .tab-content .meta {
   position: absolute;
   padding: 10px 20px;
   top: 50%;
@@ -50,16 +50,15 @@ background: white;
   height: 30%;
   color: white;
 }
-#basic_tabshow .tab-content .meta h3, #basic_slideshow .slide .meta h3 a{}
+.basic_tabshow .tab-content .meta h3, .basic_tabshow .tab-content .meta h3 a{}
 
 
-#basic_tabshow .tab-content .meta-back {
+.basic_tabshow .tab-content .meta-back {
   position: absolute;
   top: 50%;
   left: 0%;
   width: 80%;
   height: 40%;
-  min-height: 150px;
   background: black;
   opacity: 0.7;
 }
@@ -68,7 +67,7 @@ background: white;
 // The Buttons
 ********************************************/
 
-#basic_slideshow .slider-nav span{
+.orbit-wrapper .slider-nav span{
   width: 30px;
   height: 50px;
   text-indent: -9999px;
@@ -78,10 +77,10 @@ background: white;
   margin-top: -50px;
   cursor: pointer;
 }
-#basic_slideshow .slider-nav .left{
+.orbit-wrapper .slider-nav .left{
   background: url(images/left-arrow.png);
 }
-#basic_slideshow .slider-nav .right{
+.orbit-wrapper .slider-nav .right{
   background: url(images/right-arrow.png);
 }
 
