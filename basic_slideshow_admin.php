@@ -88,10 +88,16 @@ function basic_slideshow_extras_meta_box()
 	global $post;
 	$slide_meta = get_post_meta($post->ID, 'slide_meta', true);	
 	
+	$image_only = isset($slide_meta['image_only']) && $slide_meta['image_only'] == 1? "checked=\"Checked\"" : "";
+	
 	?>
 	<label for="slide_meta[slide_caption]">Slide Caption:</label><br />
 	<textarea type="text" style="width: 90%;" name="slide_meta[slide_caption]" id="slide_caption"/><?php echo $slide_meta['slide_caption']; ?></textarea><br /><br />
 	<p>Foundation's Orbit plugin includes support for captions. Captions can include HTML</p>
+	
+	<input type="checkbox" name="slide_meta[image_only]" <?php print $image_only; ?> value="1" />
+	<label for="slide_meta[image_only]">This is an "Image-Only" slide. Disregard title and caption please:</label></br>
+	
 	
 	<?php 
   //Only slides can be videos

@@ -134,6 +134,7 @@ function basic_slideshow_do_slideshow($slide_query, $slideshow="") {
       $slide_meta = get_post_meta($slide_query->post->ID, 'slide_meta', true);	
       $captionTarget = "";
       $video_url = !empty($slide_meta['video_url']) ? $slide_meta['video_url'] : "";
+      $image_only = !empty($slide_meta['image_only']) && $slide_meta['image_only'] == 1 ? True : false;
       $slide_url = !empty($slide_meta['slide_url']) ? $slide_meta['slide_url'] : get_permalink();
       $isVideo =  (!empty($video_url) && $video_url != "")? true : false;
 
@@ -156,14 +157,15 @@ function basic_slideshow_do_slideshow($slide_query, $slideshow="") {
           <a class="image" href="<?php print $slide_url; ?>" >
           <?php the_post_thumbnail('basic_slideshow_type'); ?>
           </a>
-          	
-            <?php // HERE we print the transparent overlay and text ?>
-            <div class="meta-back">&nbsp;</div>
-            <div class="meta">
-              <h3><a href="<?php print $slide_url; ?>" title="Permanent Link to <?php the_title_attribute(); ?>"><?php the_title(); ?></a></h3>
-              
-              <?php the_excerpt(); //Here's the body of the content type gets printed ?>
-            </div>
+          	<?php if (!$image_only){ ?>
+	            <?php // HERE we print the transparent overlay and text ?>
+	            <div class="meta-back">&nbsp;</div>
+	            <div class="meta">
+	              <h3><a href="<?php print $slide_url; ?>" title="Permanent Link to <?php the_title_attribute(); ?>"><?php the_title(); ?></a></h3>
+	              
+	              <?php the_excerpt(); //Here's the body of the content type gets printed ?>
+	            </div>
+            <?php } ?>
           <?php
         }
   			
@@ -192,8 +194,8 @@ function basic_slideshow_do_tabshow($slide_query, $slideshow= "default"){
     
     <?php while ($slide_query->have_posts()) : $slide_query->the_post(); 
 
-        
         $slide_meta = get_post_meta($slide_query->post->ID, 'slide_meta', true);	
+        $image_only = !empty($slide_meta['image_only']) && $slide_meta['image_only'] == 1 ? True : false;
         $video_url = !empty($slide_meta['video_url']) ? $slide_meta['video_url'] : "";
         $slide_url = !empty($slide_meta['slide_url']) ? $slide_meta['slide_url'] : get_permalink();
         $isVideo =  (!empty($video_url) && $video_url != "")? true : false;
@@ -220,14 +222,15 @@ function basic_slideshow_do_tabshow($slide_query, $slideshow= "default"){
               <?php the_post_thumbnail('basic_slideshow_type'); ?>
               </a>
               	
-                <?php // HERE we print the transparent overlay and text ?>
-                <div class="meta-back">&nbsp;</div>
-                <div class="meta">
-                  <h3><a href="<?php print $slide_url; ?>" title="Permanent Link to <?php the_title_attribute(); ?>"><?php the_title(); ?></a></h3>
-                  
-                  <?php the_excerpt(); //Here's the body of the content type gets printed ?>
-                </div>
-              <?php
+          	<?php if (!$image_only){ ?>
+	            <?php // HERE we print the transparent overlay and text ?>
+	            <div class="meta-back">&nbsp;</div>
+	            <div class="meta">
+	              <h3><a href="<?php print $slide_url; ?>" title="Permanent Link to <?php the_title_attribute(); ?>"><?php the_title(); ?></a></h3>
+	              
+	              <?php the_excerpt(); //Here's the body of the content type gets printed ?>
+	            </div>
+            <?php } 
             } ?>
           	
         </li>
