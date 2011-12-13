@@ -104,8 +104,8 @@ function basic_slideshow($atts=Array() ) {
   //print "<pre>" . print_r($slide_query,1) . "</pre>";
 
   if ($slide_query->have_posts()){
-    if (isset($atts['tabshow']) && $atts['tabshow'] == True ){
-      basic_slideshow_do_tabshow($slide_query, $slideshow);
+    if (isset($atts['tabshow']) && $atts['tabshow'] != '' ){
+      basic_slideshow_do_tabshow($slide_query, $slideshow, $atts['tabshow']);
     }
     else {
       basic_slideshow_do_slideshow($slide_query, $slideshow);
@@ -180,25 +180,53 @@ function basic_slideshow_do_slideshow($slide_query, $slideshow="") {
 /********************************************
 // Helper Function to do the TabShow
 ********************************************/
-function basic_slideshow_do_tabshow($slide_query, $slideshow= "default"){
+function basic_slideshow_do_tabshow($slide_query, $slideshow= "default", $tab_orient="right"){
+
+  //Basic test
+  $op = array("left", "right", "top", "bottom");
+  
+  if (!in_array($tab_orient, $op) ) {
+    return;
+  }
 
   //TODO: Add better structure for foundation-friendly 
   global $wp_embed;
   $basic_slide_options = get_option('basic_slideshow_options');
   $tabID = 0;
-    ?>
+  $tabs = "";
+  $content = "";
+  
 
-<div id="tabshow-<?php print $slideshow; ?>" class="row basic_tabshow">
-  <div class="eight columns">
-    <ul class="tabs-content" style="height: <?php print $basic_slide_options['slide_height']; ?>px;">
+  switch ($tab_orient) {
+      case 'top':
+          $tabClass = "nice vertical tabs";
+          $contentClass = "";
+          break;
+      case 'right':
+          $tabClass = "nice vertical tabs";
+          $contentClass = "";
+          break;
+      case 'bottom':
+          $tabClass = "nice vertical tabs";
+          $contentClass = "";
+          break;
+      case 'left':
+          $tabClass = "nice vertical tabs";
+          $contentClass = "";
+          break;
+  }
+  
+  
+  while ($slide_query->have_posts()) { 
     
-    <?php while ($slide_query->have_posts()) : $slide_query->the_post(); 
+        $slide_query->the_post(); 
 
         $slide_meta = get_post_meta($slide_query->post->ID, 'slide_meta', true);	
         $image_only = !empty($slide_meta['image_only']) && $slide_meta['image_only'] == 1 ? True : false;
         $video_url = !empty($slide_meta['video_url']) ? $slide_meta['video_url'] : "";
         $slide_url = !empty($slide_meta['slide_url']) ? $slide_meta['slide_url'] : get_permalink();
         $isVideo =  (!empty($video_url) && $video_url != "")? true : false;
+        $videoClass = $isVideo ?"video-slide": "";
   
         //if ( $tabID == 1 ) print_r(get_defined_vars());
   	    //We need title tabs  
@@ -207,46 +235,80 @@ function basic_slideshow_do_tabshow($slide_query, $slideshow= "default"){
         $tabsTarget = $slideshow."-tab".$tabID."Tab";
 	      $tabs .= "<dd><a href='#".$slideshow."-tab$tabID'>";
 	      $tabs .= "<h3>" . get_the_title() . "</h3>";
-	      $tabs .= $slide_meta['slide_caption'];//isset($slide_meta['slide_caption']) ? $slide_meta['slide_caption'] : "";
-	      $tabs .= "</a></dd>"; ?>
-        
+	      $tabs .= $slide_meta['slide_caption'];
+	      $tabs .= "</a></dd>"; 
     
-        <li id="<?php print $tabsTarget; ?>" class="tab-content <?php print $active; print $isVideo ?"video-slide": "";?>">
-          <?php
+        $content .= '<li id="'.$tabsTarget.'" class="tab-content '.$active . $videoClass .'" style="height: '. $basic_slide_options['slide_height'] . 'px;">';
+
       			if ( $isVideo ){
               $post_embed = $wp_embed->run_shortcode('[embed width="' . $basic_slide_options['slide_width'] . '" height="' . $basic_slide_options['slide_height'] . '"]' . $video_url . '[/embed]');
-              print $post_embed;
+              $content .= $post_embed;
       			}
-      			else{ ?>
-              <a class="image" href="<?php print $slide_url; ?>" style="height: <?php print $basic_slide_options['slide_height']; ?>px;">
-              <?php the_post_thumbnail('basic_slideshow_type'); ?>
-              </a>
-              	
-          	<?php if (!$image_only){ ?>
-	            <?php // HERE we print the transparent overlay and text ?>
-	            <div class="meta-back">&nbsp;</div>
-	            <div class="meta">
-	              <h3><a href="<?php print $slide_url; ?>" title="Permanent Link to <?php the_title_attribute(); ?>"><?php the_title(); ?></a></h3>
-	              
-	              <?php the_excerpt(); //Here's the body of the content type gets printed ?>
-	            </div>
-            <?php } 
-            } ?>
-          	
-        </li>
-        
-    <?php endwhile; ?>
+      			else{ 
+              $content .= '<a class="image" href="'.$slide_url.'" style="height: '.$basic_slide_options['slide_height'].'px;">';
+              $content .=  get_the_post_thumbnail($slide_query->post->ID, 'basic_slideshow_type') . '</a>';
+             
+            if (!$image_only){
+	            // HERE we print the transparent overlay and text
+	            $content .= '<div class="meta-back">&nbsp;</div>';
+	            $content .= '<div class="meta">';
+	            $content .= '<h3><a href="'.$slide_url.'" title="Permanent Link to '. the_title_attribute( array('echo' => '0')) .'">'. get_the_title() .'</a></h3>';
+	            $content .= get_the_excerpt() . "</div>";
+            } 
+            }
+        $content .= '</li>';
+      }//while  
 
+    //This stuff could be written with a lot less code but I think it 
+    //makes sense to spell it all out in order to be intuitive ?>
+    
+   <div id="tabshow-<?php print $slideshow; ?>" class="row basic_tabshow">    
+    
+    
+    <?php //Left and Top tabs need to go on top?>
+    <?php if ($tab_orient == "top") :?>
+      <div class="row">
+          <dl class="nice tabs" style="margin-bottom:0">
+            <?php print $tabs; ?>
+    		  </dl>
+      </div>
+    <?php endif; ?>
+    <?php if ($tab_orient == "left") :?>
+      <div class="columns four">
+          <dl class="nice vertical tabs" style="margin-bottom:0">
+            <?php print $tabs; ?>
+    		  </dl>
+      </div>
+    <?php endif; ?>      
+ 
+    <?php //Print tab content?>
+    <?php if ($tab_orient == "left" || $tab_orient == "right") :?><div class="eight columns"> <?php endif; ?> 
+        <ul class="tabs-content" style="height: <?php print $basic_slide_options['slide_height']; ?>px;">
+          <?php print $content; ?>
+        </ul>  
+    <?php if ($tab_orient == "left" || $tab_orient == "right") :?></div><?php endif; ?>
       
-    </ul>    
-  </div>
-  <div class="four columns">
-      <dl class="nice vertical tabs" style="margin-bottom:0">
-        <?php print $tabs; ?>
-		  </dl>
-  </div>
-</div>
+    
 
+    <?php //Right and Bottom tabs can go on the bottom ?> 
+    <?php if ($tab_orient == "bottom") :?>
+      <div class="row">
+        <dl class="nice tabs" style="margin-bottom:0">
+          <?php print $tabs; ?>
+  		  </dl>
+  		</div>
+    <?php endif; ?>
+    <?php if ($tab_orient == "right") :?>
+      <div class="columns four">
+          <dl class="nice vertical tabs" style="margin-bottom:0">
+            <?php print $tabs; ?>
+    		  </dl>
+      </div>
+    <?php endif; ?>    
+    
+    
+    
+    </div><!-- tabshow -->
 
 <?php
 }
