@@ -1,5 +1,5 @@
 function create_slideshow() {
-  var slideshow = jQuery('.basic_slideshow');
+  var slideshow = jQuery('.orbit_slideshow');
 		
     //Grab the variables that the wordpress admin page will give us
     var slideTime = slideshow_settings.slide_time > 0 ? (slideshow_settings.slide_time * 1000) : 5000;
@@ -88,7 +88,7 @@ jQuery(document).ready(function() {
 *****************************************************/
 
 function onYouTubePlayerReady(){
-  var players = jQuery('#basic_slideshow embed').each(function(){
+  var players = jQuery('#orbit_slideshow embed').each(function(){
     if (this.addEventListener) {
       this.addEventListener('onStateChange', 'handlePlayerStateChange');
     }
@@ -100,7 +100,7 @@ function onYouTubePlayerReady(){
 }
 
 function handlePlayerStateChange (state) {
-  var slideshow = jQuery('#basic_slideshow div.list');
+  var slideshow = jQuery('#orbit_slideshow div.list');
   switch (state) {
     case 1:
     case 3:

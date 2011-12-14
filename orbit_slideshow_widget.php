@@ -3,10 +3,10 @@
 /**
  * Make a simple widget that prints the slideshow
  */
-class BASIC_Slideshow extends WP_Widget {
+class ORBIT_Slideshow extends WP_Widget {
     /** constructor */
-    function BASIC_Slideshow() {
-        parent::WP_Widget(false, $name = 'Basic Slideshow');
+    function ORBIT_Slideshow() {
+        parent::WP_Widget(false, $name = 'Orbit Slideshow');
     }
 
     /** @see WP_Widget::widget */
@@ -46,6 +46,6 @@ class BASIC_Slideshow extends WP_Widget {
 } // class FooWidget
 
 // register FooWidget widget
-add_action('widgets_init', create_function('', 'return register_widget("BASIC_Slideshow");'));
+add_action('widgets_init', create_function('', 'return register_widget("orbit_Slideshow");'));
 
 ?>

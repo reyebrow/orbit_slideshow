@@ -35,14 +35,14 @@ background: white;
 // Tabbed Formatting
 ********************************************/
 
-.basic_tabshow {}
+.orbit_tabshow {}
  
-.basic_tabshow .tab-content {
+.orbit_tabshow .tab-content {
 background: #ddd;
 position: relative;
 }
-.basic_tabshow .tab-content .image {}
-.basic_tabshow .tab-content .meta {
+.orbit_tabshow .tab-content .image {}
+.orbit_tabshow .tab-content .meta {
   position: absolute;
   padding: 10px 20px;
   top: 50%;
@@ -51,10 +51,10 @@ position: relative;
   height: 30%;
   color: white;
 }
-.basic_tabshow .tab-content .meta h3, .basic_tabshow .tab-content .meta h3 a{}
+.orbit_tabshow .tab-content .meta h3, .orbit_tabshow .tab-content .meta h3 a{}
 
 
-.basic_tabshow .tab-content .meta-back {
+.orbit_tabshow .tab-content .meta-back {
   position: absolute;
   top: 50%;
   left: 0%;
@@ -64,7 +64,7 @@ position: relative;
   opacity: 0.7;
 }
 
-.basic_tabshow .tabs-content {
+.orbit_tabshow .tabs-content {
   background: #ddd;
 }
 
