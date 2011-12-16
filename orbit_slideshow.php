@@ -58,7 +58,7 @@ function orbit_slideshow_custom_excerpt(){
 // Shortcode Handler: Do the actual slideshow Query
 ****************************************************/
 //This is just a shortcode handler that we can call directly.
-function orbit_slideshow($atts=Array() ) {
+function orbit_slideshow($atts ) {
 
   global $wp_query;
   global $post;
@@ -151,6 +151,7 @@ function orbit_slideshow_do_slideshow($slide_query, $slideshow="") {
   	<?php
   			if ( $isVideo ){
           $post_embed = $wp_embed->run_shortcode('[embed width="' . $orbit_slide_options['slide_width'] . '" height="' . $orbit_slide_options['slide_height'] . '"]' . $video_url . '[/embed]');
+          
           print $post_embed;
   			}
   			else{ ?>
@@ -238,14 +239,14 @@ function orbit_slideshow_do_tabshow($slide_query, $slideshow= "default", $tab_or
 	      $tabs .= $slide_meta['slide_caption'];
 	      $tabs .= "</a></dd>"; 
     
-        $content .= '<li id="'.$tabsTarget.'" class="tab-content '.$active . $videoClass .'" style="height: '. $orbit_slide_options['slide_height'] . 'px;">';
+        $content .= '<li id="'.$tabsTarget.'" class="tab-content '.$active . $videoClass .'" >';
 
       			if ( $isVideo ){
               $post_embed = $wp_embed->run_shortcode('[embed width="' . $orbit_slide_options['slide_width'] . '" height="' . $orbit_slide_options['slide_height'] . '"]' . $video_url . '[/embed]');
               $content .= $post_embed;
       			}
       			else{ 
-              $content .= '<a class="image" href="'.$slide_url.'" style="height: '.$orbit_slide_options['slide_height'].'px;">';
+              $content .= '<a class="image" href="'.$slide_url.'">';
               $content .=  get_the_post_thumbnail($slide_query->post->ID, 'orbit_slideshow_type') . '</a>';
              
             if (!$image_only){
@@ -283,7 +284,7 @@ function orbit_slideshow_do_tabshow($slide_query, $slideshow= "default", $tab_or
  
     <?php //Print tab content?>
     <?php if ($tab_orient == "left" || $tab_orient == "right") :?><div class="eight columns"> <?php endif; ?> 
-        <ul class="tabs-content" style="height: <?php print $orbit_slide_options['slide_height']; ?>px;">
+        <ul class="tabs-content" >
           <?php print $content; ?>
         </ul>  
     <?php if ($tab_orient == "left" || $tab_orient == "right") :?></div><?php endif; ?>

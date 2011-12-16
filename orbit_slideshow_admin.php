@@ -321,7 +321,7 @@ function orbit_slideshow_plugin_options() {
   <pre>
     [orbit_slideshow]  //Just the default slideshow showing all the slides (but nothing else)
   </pre> 
-  <p>You can also have an unlimited number of slideshows that are named and assigned specific content.<pre></p>
+  <p>You can also have an unlimited number of slideshows that are named and assigned specific content.</p>
   <pre>
     [orbit_slideshow slideshow="frontpage"] //Show the slideshow named "frontpage". Any post or page tagged with this slideshow will appear
   </pre>   
