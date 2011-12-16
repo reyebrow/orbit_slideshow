@@ -233,7 +233,7 @@ function orbit_slideshow_do_tabshow($slide_query, $slideshow= "default", $tab_or
         $tabID ++;
         $active = $tabID == 1 ? "active " : "";
         $tabsTarget = $slideshow."-tab".$tabID."Tab";
-	      $tabs .= "<dd><a href='#".$slideshow."-tab$tabID'>";
+	      $tabs .= "<dd><a class='$active' href='#".$slideshow."-tab$tabID'>";
 	      $tabs .= "<h3>" . get_the_title() . "</h3>";
 	      $tabs .= $slide_meta['slide_caption'];
 	      $tabs .= "</a></dd>"; 
