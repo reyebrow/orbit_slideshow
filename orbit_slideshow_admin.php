@@ -10,7 +10,7 @@ function orbit_create_slideshow_posttype() {
   $orbit_slide_options = get_option('orbit_slideshow_options');
   
   $labels = array(
-      'name' => _x('Slides', 'post type general name'),
+      'name' => _x('Slideshows', 'post type general name'),
       'singular_name' => _x('Slide', 'post type singular name'),
       'add_new' => _x('Add Slide','resources & tools'),
       'add_new_item' => __('Add New Slide'),
