@@ -60,20 +60,20 @@ jQuery(document).ready(function() {
 	  $tab.addClass('active');
 
     //Show Tab Content
-		$(contentLocation).closest('.tabs-content').find('li').hide();
-		$(contentLocation).show();
+		jQuery(contentLocation).closest('.tabs-content').find('li').hide();
+		jQuery(contentLocation).show();
 	}
 
-	$('dl.tabs').each(function () {
+	jQuery('dl.tabs').each(function () {
 		//Get all tabs
-		var tabs = $(this).children('dd').children('a');
+		var tabs = jQuery(this).children('dd').children('a');
 		tabs.click(function (e) {
-		  activateTab($(this));
+		  activateTab(jQuery(this));
 		});
 	});
 
 	if (window.location.hash) {
-    activateTab($('a[href="' + window.location.hash + '"]'));
+    activateTab(jQuery('a[href="' + window.location.hash + '"]'));
   }
 
 
