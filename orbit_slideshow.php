@@ -27,7 +27,7 @@ function orbit_add_scripts() {
   wp_enqueue_script('jquery');
   
    wp_register_script('jquery.orbit-1.3.0',
-         plugins_url('foundation/jquery.orbit-1.3.0.js', __FILE__),
+         plugins_url('foundation/jquery.orbit-1.4.0.js', __FILE__),
          array('jquery'),
          '1.0' );
    wp_enqueue_style('orbit.style', plugins_url('foundation/orbit.css', __FILE__));
