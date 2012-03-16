@@ -27,7 +27,7 @@ function create_slideshow() {
          bullets: true,			            // true or false to activate the bullet navigation
          bulletThumbs: false,		        // thumbnails for the bullets
          bulletThumbLocation: '',		    // location from this file where thumbs will be
-         afterSlideChange: function(){}, 	 // empty function 
+         afterSlideChange: function(){} 	 // empty function 
          //fluid: slideshow_settings.slide_width+'x'+slideshow_settings.slide_height              // or set a aspect ratio for content slides (ex: '4x3') 
 
       });    
