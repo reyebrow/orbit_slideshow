@@ -58,7 +58,7 @@ function orbit_slideshow_custom_excerpt(){
 // Shortcode Handler: Do the actual slideshow Query
 ****************************************************/
 //This is just a shortcode handler that we can call directly.
-function orbit_slideshow($atts ) {
+function orbit_slideshow($atts =array() ) {
 
   global $wp_query;
   global $post;
