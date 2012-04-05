@@ -129,7 +129,7 @@ function orbit_slideshow_do_slideshow($slide_query, $slideshow="") {
   $captions="";
 
   ?>
-  <div id="slideshow-<?php print $slideshow; ?>" class="orbit_slideshow">
+  <div id="slideshow-<?php print $slideshow; ?>" class="orbit orbit_slideshow">
   	<?php while ($slide_query->have_posts()) : $slide_query->the_post();
       $slide_meta = get_post_meta($slide_query->post->ID, 'slide_meta', true);	
       $captionTarget = "";
