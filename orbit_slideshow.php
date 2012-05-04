@@ -135,7 +135,7 @@ function orbit_slideshow_do_slideshow($slide_query, $slideshow="") {
       $captionTarget = "";
       $video_url = !empty($slide_meta['video_url']) ? $slide_meta['video_url'] : "";
       $image_only = !empty($slide_meta['image_only']) && $slide_meta['image_only'] == 1 ? True : false;
-      $slide_url = !empty($slide_meta['slide_url']) ? $slide_meta['slide_url'] : get_permalink();
+      $slide_url = !empty($slide_meta['slide_url']) ? $slide_meta['slide_url'] : "#";
       $isVideo =  (!empty($video_url) && $video_url != "")? true : false;
 
 	    //IF this slide has a caption then print it out for inclusion later      

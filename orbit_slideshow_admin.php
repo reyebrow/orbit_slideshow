@@ -91,26 +91,27 @@ function orbit_slideshow_extras_meta_box()
 	$image_only = isset($slide_meta['image_only']) && $slide_meta['image_only'] == 1? "checked=\"Checked\"" : "";
 	
 	?>
-	<label for="slide_meta[slide_caption]">Slide Caption:</label><br />
+	<p><label for="slide_meta[slide_caption]">Slide Caption:</label></p>
 	<textarea type="text" style="width: 90%;" name="slide_meta[slide_caption]" id="slide_caption"/><?php echo $slide_meta['slide_caption']; ?></textarea><br /><br />
 	<p>Foundation's Orbit plugin includes support for captions. Captions can include HTML</p>
 	
-	<input type="checkbox" name="slide_meta[image_only]" <?php print $image_only; ?> value="1" />
-	<label for="slide_meta[image_only]">This is an "Image-Only" slide. Disregard title and caption please:</label></br>
+  <p><label for="slide_meta[image_only]"><strong>Image-Only:</strong></label></p>
+	<p><input type="checkbox" name="slide_meta[image_only]" <?php print $image_only; ?> value="1" />
+	<label for="slide_meta[image_only]">This is an "Image-Only" slide. Disregard title and content please:</label></p>
 	
 	
 	<?php 
   //Only slides can be videos
 	if ($post->post_type=="orbit_slideshow_type"){ ?>
-  	<label for="slide_meta[video_url]">Video URL (optional):</label><br />
-  	<input type="text" style="width: 90%;" name="slide_meta[video_url]" id="video_url" value="<?php echo $slide_meta['video_url']; ?>" /><br /><br />
-  	<p><em>Note: only use this field if you intend this to be a video slide. Making a slide into a video slide means the title and the body text won't show.</em><br/>
+  	<!-- <label for="slide_meta[video_url]">Video URL (optional):</label><br /> -->
+  	<!-- <input type="text" style="width: 90%;" name="slide_meta[video_url]" id="video_url" value="<?php echo $slide_meta['video_url']; ?>" /><br /><br /> -->
+  	<!-- <p><em>Note: only use this field if you intend this to be a video slide. Making a slide into a video slide means the title and the body text won't show.</em><br/>
   	Any <a href="http://codex.wordpress.org/Embeds" target="_blank">oembed</a> url should work here. Youtube videos work great if you use the shortenned share url (http://youtu.be/xxxxxxxxx). <br/>
-  	Vimeo works but won't pause properly when you change slides so be aware of that.</p>
+  	Vimeo works but won't pause properly when you change slides so be aware of that.</p> -->
   	
-  	<label for="slide_meta[slide_url]">Link (optional):</label><br />
-  	<input type="text" style="width: 90%;"  name="slide_meta[slide_url]" id="slide_url" value="<?php echo $slide_meta['slide_url']; ?>" /><br /><br />
-  	This slide will link to its own post by default. Put something else in here or simply put &lt;none&gt; for no link.	
+  	<p><label for="slide_meta[slide_url]"><strong>Link (optional):</strong></label></p>
+  	<input type="text" style="width: 90%;"  name="slide_meta[slide_url]" id="slide_url" value="<?php echo $slide_meta['slide_url']; ?>" />
+  	<p>This slide will link to its own post by default. Put something else in here or simply put &lt;none&gt; for no link.</p>
 	<?php }
 }
 
