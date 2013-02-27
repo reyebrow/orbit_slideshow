@@ -25,17 +25,9 @@ function orbit_add_scripts() {
   //print "<pre>" . print_r($wp_scripts,1) . "</pre>";
   
   wp_enqueue_script('jquery');
-  
-   wp_register_script('jquery.orbit-1.3.0',
-         plugins_url('foundation/jquery.orbit-1.4.0.js', __FILE__),
-         array('jquery'),
-         '1.0' );
-   wp_enqueue_style('orbit.style', plugins_url('foundation/orbit.css', __FILE__));
-         
+           
    wp_register_script('orbit_slideshow_script',
-         plugins_url('js/orbit_slideshow.js', __FILE__),
-         array('jquery.orbit-1.3.0'),
-         '1.0' );
+         plugins_url('js/orbit_slideshow.js', __FILE__), '1.0' );
   
     wp_enqueue_script('jquery.orbit-1.3.0');
     wp_enqueue_script('orbit_slideshow_script');
